@@ -10,10 +10,6 @@
 #include <stdio.h>
 #include <tchar.h>
 
-
-
-
-
 //#include <GLTools.h>	// OpenGL toolkit
 #include <GLMatrixStack.h>
 #include <GLFrame.h>

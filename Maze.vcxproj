@@ -82,6 +82,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Cube.cpp" />
     <ClCompile Include="EasyBMP.cpp" />
     <ClCompile Include="Maze.cpp" />
     <ClCompile Include="stdafx.cpp">
