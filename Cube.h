@@ -10,16 +10,14 @@ class Cube
 public:
 	typedef float * Array;
 
-	//static 
-	int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture;
-	//static 
-	int locMVP, locMV, locNM;
+	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture;
+	static int locMVP, locMV, locNM;
 
 	int numFrame;
 
-	GLuint shader, textureID;
+	static GLuint shader, textureID;
 
-	static bool readTexture;//, readShader;
+	static bool readTexture, readShader;
 
 	Array final_vert, final_text, norm_final;
 
