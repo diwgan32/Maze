@@ -110,16 +110,34 @@ void RenderScene(void)
 	glutSwapBuffers();
 }
 
-void SpecialKeys(int key, int x, int y)
+void NormalKeys(unsigned char key, int x, int y)
 {
-	if(key == GLUT_KEY_UP)
-		camera_position[2]+=.5;
-	if(key == GLUT_KEY_DOWN)
-		camera_position[2]-=.5;
-	if(key == GLUT_KEY_LEFT)
-		camera_position[0]+=.5;
-	if(key == GLUT_KEY_RIGHT)
-		camera_position[0]-=.5;
+	switch(key){
+	case 'w':
+	case 'W':
+		camera_position[2] += 0.5;
+		break;
+	case 's':
+	case 'S':
+		camera_position[2] -= 0.5;
+		break;
+	case 'a':
+	case 'A':
+		camera_position[0] += 0.5;
+		break;
+	case 'd':
+	case 'D':
+		camera_position[0] -= 0.5;
+		break;
+	case 'e':
+	case 'E':
+		camera_position[1] -= 0.5;
+		break;
+	case 'c':
+	case 'C':
+		camera_position[1] += 0.5;
+		break;
+	}
 
 	glutPostRedisplay();
 }
@@ -139,7 +157,7 @@ int main(int argc, char* argv[])
 
 	glutReshapeFunc(ChangeSize);
 	glutDisplayFunc(RenderScene);
-	glutSpecialFunc(SpecialKeys);
+	glutKeyboardFunc(NormalKeys);
 
 	GLenum err = glewInit();
 
