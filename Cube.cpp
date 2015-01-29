@@ -126,7 +126,7 @@ void Cube::init(float offset[3]){
 
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
-	total = 18;
+	total = 24;
 
 	// FLBRTB
 
@@ -261,7 +261,7 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	glBindBuffer(GL_ARRAY_BUFFER, texbuffID[0]);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	glDrawArrays(GL_QUAD_STRIP, 0, total);
+	glDrawArrays(GL_QUADS, 0, total);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);

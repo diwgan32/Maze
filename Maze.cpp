@@ -95,7 +95,7 @@ void SetupRC(void/*HINSTANCE hInstance*/)
 							float offset[] = {i, k, j};
 							model[count].init(offset);
 							model[count].bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
-							count++;s
+							count++;
 						}
 }
 
