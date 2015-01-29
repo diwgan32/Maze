@@ -111,9 +111,9 @@ void RenderScene(void)
 	modelViewMatrix.Translate(camera_position[0]-15, camera_position[1]-5, camera_position[2]-15);
 	modelViewMatrix.Rotate(rot, 0.0, 1.0, 0.0);
 
-	//for(int i = 0; i<numBlocks; i++){
-		model[0].draw(transformPipeline);
-//	}
+	for(int i = 0; i<numBlocks; i++)
+		model[i].draw(transformPipeline);
+
 	modelViewMatrix.PopMatrix();
 
 	glutSwapBuffers();

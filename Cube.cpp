@@ -3,6 +3,18 @@
 
 #include <assert.h>
 
+#define VERT_TOTAL 24
+
+#define V_SIZE (VERT_TOTAL * 4)
+#define N_SIZE (VERT_TOTAL * 4)
+#define T_SIZE (VERT_TOTAL * 2)
+
+#define V_COORD_SZ 3
+#define N_COORD_SZ 3
+#define T_COORD_SZ 2
+
+#define FLOAT_SZ sizeof(float)
+
 GLuint Cube::shader, Cube::textureID;
 
 bool Cube::readTexture, Cube::readShader;
@@ -111,6 +123,8 @@ void Cube::init(float offset[3]){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
+	glGenerateMipmap(GL_TEXTURE_2D);
+
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if(readTexture == false){
@@ -126,79 +140,46 @@ void Cube::init(float offset[3]){
 
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
-	total = 24;
-
-	// FLBRTB
-
-	// 0 0 0 0 1 0 1 1 0 1 0 0 0 0 1 0 1 1 0 1 0 0 0 0 0 0 1 0 1 1 1 1 1 1 0 1 1 0 1 1 1 1 1 1 0 1 0 0 0 1 0 0 1 1 1 1 1 1 1 0 0 0 0 0 0 1 1 0 1 1 0 0
-
-	float VERTS[] = {0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1
+	const float VERTS[] = {0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1
 		, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 
 		0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 
 		1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0};
 
-	// 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1 0 0 0 0 1 1 1 1 0
+	const float TEX[]= {0, 0, 0, 1, 1, 1, 1, 0,
+		0, 0, 0, 1, 1, 1, 1, 0,
+		0, 0, 0, 1, 1, 1, 1, 0,
+		0, 0, 0, 1, 1, 1, 1, 0,
+		0, 0, 0, 1, 1, 1, 1, 0,
+		0, 0, 0, 1, 1, 1, 1, 0};
 
-	// 0 0
-	// 0 1
-	// 1 1
-	// 1 0
+	const float NORM[]= {0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 
+		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0,
+		0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1,
+		1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
+		0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
+		0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0};
 
-	// 0 0
-	// 0 1
-	// 1 1
-	// 1 0
+	final_vert = new float[V_SIZE];
+	norm_final = new float[N_SIZE];
+	final_text = new float[T_SIZE];
 
-	// 0 0
-	// 0 1
-	// 1 1
-	// 1 0
-
-	// 0 0
-	// 0 1
-	// 1 1
-	// 1 0
-
-	float TEX[]= {0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 
-		0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0, 0, 0, 0, 
-		1, 1, 1, 1, 0, 0, 0, 0, 1, 1, 1, 1, 0};
-
-	// FLBRTB
-
-	// 0 0 -1 0 0 -1 0 0 -1 0 0 -1 -1 0 0 -1 0 0 -1 0 0 -1 0 0 0 0 1 0 0 1 0 0 1 0 0 1 1 0 0 1 0 0 1 0 0 1 0 0 0 1 0 0 1 0 0 1 0 0 1 0 0 -1 0 0 -1 0 0 -1 0 0 -1 0
-
-	float NORM[]= {0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 
-		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0, 0, 0, 0, 1, 0,
-		0, 1, 0, 0, 1, 0, 0, 1, 1, 0, 0, 1, 0, 0, 1, 0, 0, 
-		1, 0, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 
-		-1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0};
-
-	vsize = 72;
-	nsize = 72;
-	tsize = 32;
-
-	final_vert = new float[72];
-	norm_final = new float[72];
-	final_text = new float[32];
-
-	for(int i = 0; i<72; i++){
+	for(int i = 0; i<V_SIZE; i++){
 		final_vert[i] = VERTS[i] + offset[i % 3];
 		norm_final[i] = NORM[i];
 	}
-	for(int i = 0; i<32; i++){
+	for(int i = 0; i<T_SIZE; i++)
 		final_text[i] = TEX[i];
-	}
 }
 
 void Cube::bind(GLenum buff_type, GLenum draw_type){
 	glBindBuffer(buff_type, vertbuffID[0]);
-	glBufferData(buff_type, 72*3, final_vert, draw_type);
+	glBufferData(buff_type, V_SIZE*FLOAT_SZ, final_vert, draw_type);
 
 	glBindBuffer(buff_type, normbuffID[0]);
-	glBufferData(buff_type, 72*3, norm_final, draw_type);
+	glBufferData(buff_type, N_SIZE*FLOAT_SZ, norm_final, draw_type);
 
 	glBindBuffer(buff_type, texbuffID[0]);
-	glBufferData(buff_type, 32*2, final_text, draw_type);
+	glBufferData(buff_type, T_SIZE*FLOAT_SZ, final_text, draw_type);
 
 	if(readShader == false){
 		shader = Cube::loadShaderPair("ADSTexture.vp", "ADSTexture.fp");
@@ -251,17 +232,17 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertbuffID[0]);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0,NULL);
+	glVertexAttribPointer(0, V_COORD_SZ, GL_FLOAT, GL_FALSE, 0,NULL);
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, normbuffID[0]);
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 0, NULL);
+	glVertexAttribPointer(1, N_COORD_SZ, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	glEnableVertexAttribArray(2);
 	glBindBuffer(GL_ARRAY_BUFFER, texbuffID[0]);
-	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
+	glVertexAttribPointer(2, T_COORD_SZ, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	glDrawArrays(GL_QUADS, 0, 24);
+	glDrawArrays(GL_QUADS, 0, VERT_TOTAL);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
