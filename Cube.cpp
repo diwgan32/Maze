@@ -192,13 +192,13 @@ void Cube::init(float offset[3]){
 
 void Cube::bind(GLenum buff_type, GLenum draw_type){
 	glBindBuffer(buff_type, vertbuffID[0]);
-	glBufferData(buff_type, vsize, final_vert, draw_type);
+	glBufferData(buff_type, 72*3, final_vert, draw_type);
 
 	glBindBuffer(buff_type, normbuffID[0]);
-	glBufferData(buff_type, nsize, norm_final, draw_type);
+	glBufferData(buff_type, 72*3, norm_final, draw_type);
 
 	glBindBuffer(buff_type, texbuffID[0]);
-	glBufferData(buff_type, tsize, final_text, draw_type);
+	glBufferData(buff_type, 32*2, final_text, draw_type);
 
 	if(readShader == false){
 		shader = Cube::loadShaderPair("ADSTexture.vp", "ADSTexture.fp");
@@ -261,7 +261,7 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	glBindBuffer(GL_ARRAY_BUFFER, texbuffID[0]);
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 0, NULL);
 
-	glDrawArrays(GL_QUADS, 0, total);
+	glDrawArrays(GL_QUADS, 0, 24);
 
 	glDisableVertexAttribArray(0);
 	glDisableVertexAttribArray(1);
