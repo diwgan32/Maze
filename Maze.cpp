@@ -2,7 +2,10 @@
 //
 
 #include "stdafx.h"
+
+#include "Maze.h"
 #include "Cube.h"
+
 #include "EasyBMP\EasyBMP.h"
 
 #include <GLTools.h>            // OpenGL toolkit
@@ -16,6 +19,8 @@
 #define FREEGLUT_STATIC
 #include <GL/glut.h>            // Windows FreeGlut equivalent
 #endif
+
+#define MOVE_SPEED 0.02
 
 using namespace std;
 
@@ -34,6 +39,8 @@ GLFrame viewFrame;
 
 int numBlocks = 0;
 
+bool keys[256];
+
 void ChangeSize(int w, int h)
 {
 	if(h == 0)
@@ -49,7 +56,7 @@ void ChangeSize(int w, int h)
 
 }
 
-void SetupRC(/*HINSTANCE hInstance*/)
+void SetupRC(void/*HINSTANCE hInstance*/)
 {
 	glEnable(GL_DEPTH_TEST);
 
@@ -94,6 +101,8 @@ void SetupRC(/*HINSTANCE hInstance*/)
 
 void RenderScene(void)
 {
+	ProcessSceneInfo();
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_DEPTH_TEST);
@@ -110,45 +119,38 @@ void RenderScene(void)
 	glutSwapBuffers();
 }
 
-void NormalKeys(unsigned char key, int x, int y)
-{
-	switch(key){
-	case 'w':
-	case 'W':
-		camera_position[2] += 0.5;
-		break;
-	case 's':
-	case 'S':
-		camera_position[2] -= 0.5;
-		break;
-	case 'a':
-	case 'A':
-		camera_position[0] += 0.5;
-		break;
-	case 'd':
-	case 'D':
-		camera_position[0] -= 0.5;
-		break;
-	case 'e':
-	case 'E':
-		camera_position[1] -= 0.5;
-		break;
-	case 'c':
-	case 'C':
-		camera_position[1] += 0.5;
-		break;
-	}
+void ProcessSceneInfo(void){
+	if(keys['w'] || keys['W'])
+		camera_position[2] += MOVE_SPEED;
+	if(keys['s'] || keys['S'])
+		camera_position[2] -= MOVE_SPEED;
+	if(keys['a'] || keys['A'])
+		camera_position[0] += MOVE_SPEED;
+	if(keys['d'] || keys['D'])
+		camera_position[0] -= MOVE_SPEED;
+	if(keys['e'] || keys['E'])
+		camera_position[1] -= MOVE_SPEED;
+	if(keys['c'] || keys['C'])
+		camera_position[1] += MOVE_SPEED;
 
 	glutPostRedisplay();
+}
+
+void DownKeys(unsigned char key, int x, int y){
+	keys[key] = true;
+}
+
+void UpKeys(unsigned char key, int x, int y){
+	keys[key] = false;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // Main entry point for GLUT based programs
-int main(int argc, char* argv[])
+int main(int argc, char * argv[])
 {
 	gltSetWorkingDirectory(argv[0]);
-	
+
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 	glutInitWindowSize(940, 800);
@@ -157,7 +159,8 @@ int main(int argc, char* argv[])
 
 	glutReshapeFunc(ChangeSize);
 	glutDisplayFunc(RenderScene);
-	glutKeyboardFunc(NormalKeys);
+	glutKeyboardFunc(DownKeys);
+	glutKeyboardUpFunc(UpKeys);
 
 	GLenum err = glewInit();
 
