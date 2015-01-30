@@ -24,4 +24,5 @@
 #include <vector>
 #include <math3d.h>
 #include <string.h>
+#include <math.h>
 // TODO: reference additional headers your program requires here

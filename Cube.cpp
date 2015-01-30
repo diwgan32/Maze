@@ -128,7 +128,7 @@ void Cube::init(float offset[3]){
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if(readTexture == false){
-		pBits = gltReadTGABits("CoolTexture.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		pBits = gltReadTGABits("brick_sml_grn1b.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
 

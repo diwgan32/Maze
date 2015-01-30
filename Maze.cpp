@@ -33,7 +33,8 @@ GLMatrixStack       projectionMatrix;
 GLGeometryTransform transformPipeline;
 
 float camera_position[] = {0, 0, 0};
-float rot = 0;
+float rot[] = {0, 0, 0};
+
 
 GLFrame viewFrame;
 
@@ -49,11 +50,10 @@ void ChangeSize(int w, int h)
 	glViewport(0, 0, w, h);
 
 	viewFrustum.SetPerspective(35.0f, float(w)/float(h), 1.0f, 1000.0f);
-
 	projectionMatrix.LoadMatrix(viewFrustum.GetProjectionMatrix());
 	transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 	modelViewMatrix.LoadIdentity();
-
+	
 }
 
 void SetupRC(void/*HINSTANCE hInstance*/)
@@ -106,11 +106,14 @@ void RenderScene(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_DEPTH_TEST);
-
+//	viewFrame.RotateLocal(rot[0], 1.0, 0.0, 0.0);
+//	viewFrame.RotateLocal(rot[2], 0.0, 1.0, 0.0);
+	projectionMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
+	projectionMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);
 	modelViewMatrix.PushMatrix(viewFrame);
 	modelViewMatrix.Translate(camera_position[0]-15, camera_position[1]-5, camera_position[2]-15);
-	modelViewMatrix.Rotate(rot, 0.0, 1.0, 0.0);
 
+	
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
@@ -144,6 +147,20 @@ void UpKeys(unsigned char key, int x, int y){
 	keys[key] = false;
 }
 
+void MouseFuction(int x, int y){
+	float new_x = x-(940/2);
+	float new_y = y-(800/2);
+
+	if (abs(new_x) < 100 && abs(new_y) < 100){
+		rot[0] = 0;
+		rot[2] = 0;
+	}else{
+		
+		rot[0] = new_y*.0001;
+		rot[2] = new_x*.0001;
+	}
+	
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // Main entry point for GLUT based programs
@@ -161,7 +178,7 @@ int main(int argc, char * argv[])
 	glutDisplayFunc(RenderScene);
 	glutKeyboardFunc(DownKeys);
 	glutKeyboardUpFunc(UpKeys);
-
+	glutPassiveMotionFunc(MouseFuction);
 	GLenum err = glewInit();
 
 	if (GLEW_OK != err) {
