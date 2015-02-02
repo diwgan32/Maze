@@ -20,7 +20,8 @@
 #include <GL/glut.h>            // Windows FreeGlut equivalent
 #endif
 
-#define MOVE_SPEED 0.02
+#define MOVE_SPEED 0.02f
+#define ROTATE_SPEED 0.1f
 
 using namespace std;
 
@@ -35,12 +36,13 @@ GLGeometryTransform transformPipeline;
 float camera_position[] = {0, 0, 0};
 float rot[] = {0, 0, 0};
 
-
 GLFrame viewFrame;
 
 int numBlocks = 0;
 
 bool keys[256];
+
+bool escDown;
 
 void ChangeSize(int w, int h)
 {
@@ -70,7 +72,7 @@ void SetupRC(void/*HINSTANCE hInstance*/)
 		for(int j = 0; j<size; j++)
 			if(maze(i, j)->Red == 0){
 				map[i][j] = 1;
-				numBlocks ++;
+				numBlocks++;
 			}else
 				map[i][j] = 0;
 
@@ -106,14 +108,15 @@ void RenderScene(void)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 	glEnable(GL_DEPTH_TEST);
-//	viewFrame.RotateLocal(rot[0], 1.0, 0.0, 0.0);
-//	viewFrame.RotateLocal(rot[2], 0.0, 1.0, 0.0);
-	projectionMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
-	projectionMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);
-	modelViewMatrix.PushMatrix(viewFrame);
-	modelViewMatrix.Translate(camera_position[0]-15, camera_position[1]-5, camera_position[2]-15);
 
-	
+	modelViewMatrix.PushMatrix();
+
+	modelViewMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
+	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);
+
+	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	//modelViewMatrix.Translate(camera_position[0]-15, camera_position[1]-5, camera_position[2]-15);
+
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
@@ -131,16 +134,22 @@ void ProcessSceneInfo(void){
 		camera_position[0] += MOVE_SPEED;
 	if(keys['d'] || keys['D'])
 		camera_position[0] -= MOVE_SPEED;
-	if(keys['e'] || keys['E'])
+		if(keys['e'] || keys['E'])
 		camera_position[1] -= MOVE_SPEED;
 	if(keys['c'] || keys['C'])
 		camera_position[1] += MOVE_SPEED;
+
+	if(!escDown)
+		glutWarpPointer(940/2,800/2);
 
 	glutPostRedisplay();
 }
 
 void DownKeys(unsigned char key, int x, int y){
 	keys[key] = true;
+
+	if(key == 27)
+		escDown = !escDown;
 }
 
 void UpKeys(unsigned char key, int x, int y){
@@ -151,14 +160,14 @@ void MouseFuction(int x, int y){
 	float new_x = x-(940/2);
 	float new_y = y-(800/2);
 
-	if (abs(new_x) < 100 && abs(new_y) < 100){
-		rot[0] = 0;
-		rot[2] = 0;
-	}else{
+	//if (abs(new_x) < 100 && abs(new_y) < 100){
+	//	rot[0] = 0;
+	//	rot[2] = 0;
+	//}else{
 		
-		rot[0] = new_y*.0001;
-		rot[2] = new_x*.0001;
-	}
+		rot[0] = new_y*ROTATE_SPEED;
+		rot[2] = new_x*ROTATE_SPEED;
+	//}
 	
 }
 
