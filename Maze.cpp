@@ -136,9 +136,12 @@ void renderScene(void)
 	modelViewMatrix.PopMatrix();
 
 	glutSwapBuffers();
+	glutPostRedisplay();
 }
 
 void renderText(char * p){
+	glDisable(GL_TEXTURE_2D);
+
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -148,9 +151,7 @@ void renderText(char * p){
 	glPushMatrix();
 	glLoadIdentity();
 
-	glColor3f(0.0, 1.0, 0.0); // Green
-
-	glRasterPos2i(10, 10);
+	glRasterPos2i(10, height - 20);
 
 	string s = p;
 	void * font = GLUT_BITMAP_9_BY_15;
@@ -158,14 +159,16 @@ void renderText(char * p){
 	for (string::iterator i = s.begin(); i != s.end(); ++i)
 	{
 		char c = *i;
+		glColor3d(0.0, 1.0, 0.0); // Green
 		glutBitmapCharacter(font, c);
 	}
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
-
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
+
+	glEnable(GL_TEXTURE_2D);
 }
 
 void processSceneInfo(void){
@@ -199,8 +202,6 @@ void processSceneInfo(void){
 	else
 		for(int i = 0; i < 20*20; i++)
 			model[i].offMipmap();
-
-	glutPostRedisplay();
 }
 
 void downKeys(unsigned char key, int x, int y){
