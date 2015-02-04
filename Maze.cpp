@@ -20,7 +20,7 @@
 #include <GL/glut.h>            // Windows FreeGlut equivalent
 #endif
 
-#define MOVE_SPEED 0.02f
+#define MOVE_SPEED 0.1f
 #define ROTATE_SPEED 0.1f
 
 #define START_WIDTH 940
@@ -74,10 +74,10 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	glEnable(GL_DEPTH_TEST);
 
 	BMP maze;
-	maze.ReadFromFile("easybmp.bmp");
+	maze.ReadFromFile("easybmp1.bmp");
 
-	int map[20][20];
-	int size = 20;
+	int map[81][81];
+	int size = 81;
 
 	for(int i = 0; i<size; i++)
 		for(int j = 0; j<size; j++)
@@ -87,7 +87,7 @@ void setupRC(void/*HINSTANCE hInstance*/)
 			}else
 				map[i][j] = 0;
 
-			numBlocks *= 5;
+			numBlocks *= 2;
 
 			model = new Cube[numBlocks];
 
@@ -104,7 +104,7 @@ void setupRC(void/*HINSTANCE hInstance*/)
 			for(int i = 0; i<size; i++)
 				for(int j = 0; j<size; j++)
 					if(map[i][j] == 1)
-						for(int k = 0; k<5; k++){
+						for(int k = 0; k<2; k++){
 							float offset[] = {i, k, j};
 							model[count].init(offset);
 							model[count].bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
@@ -125,8 +125,8 @@ void renderScene(void)
 	modelViewMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
 	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);
 
-	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-	//modelViewMatrix.Translate(camera_position[0]-15, camera_position[1]-5, camera_position[2]-15);
+	//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	modelViewMatrix.Translate(camera_position[0]-5, camera_position[1]-1, camera_position[2]-5);
 
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
