@@ -185,10 +185,6 @@ void processSceneInfo(void){
 		camera_position[0] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
 		camera_position[2] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
 	}
-	if(keys['a'] || keys['A'])
-		camera_position[0] += MOVE_SPEED;
-	if(keys['d'] || keys['D'])
-		camera_position[0] -= MOVE_SPEED;
 	if(keys['e'] || keys['E'])
 		camera_position[1] -= MOVE_SPEED;
 	if(keys['c'] || keys['C'])
@@ -205,7 +201,6 @@ void processSceneInfo(void){
 			model[i].offMipmap();
 
 	glutPostRedisplay();
-
 }
 
 void downKeys(unsigned char key, int x, int y){
