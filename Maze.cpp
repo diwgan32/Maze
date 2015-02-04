@@ -203,8 +203,7 @@ void processSceneInfo(void){
 	else
 		for(int i = 0; i < 20*20; i++)
 			model[i].offMipmap();
-	num++;
-	num%=10;
+
 	glutPostRedisplay();
 
 }
