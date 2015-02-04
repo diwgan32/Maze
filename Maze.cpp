@@ -126,10 +126,14 @@ void RenderScene(void)
 }
 
 void ProcessSceneInfo(void){
-	if(keys['w'] || keys['W'])
+	if(keys['w'] || keys['W']){
 		camera_position[2] += MOVE_SPEED;
-	if(keys['s'] || keys['S'])
+		camera_position[0] += -rot[2]*MOVE_SPEED*.02;
+	}
+	if(keys['s'] || keys['S']){
 		camera_position[2] -= MOVE_SPEED;
+		camera_position[0] += rot[2]*MOVE_SPEED*.02;
+	}
 	if(keys['a'] || keys['A'])
 		camera_position[0] += MOVE_SPEED;
 	if(keys['d'] || keys['D'])
