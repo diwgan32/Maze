@@ -25,6 +25,9 @@ int Cube::locMVP, Cube::locMV, Cube::locNM;
 Cube::Cube(){
 }
 
+Cube::~Cube(){
+}
+
 GLuint Cube::loadShaderPair(char * vertsrc, char * fragsrc){
 	GLuint program;
 	GLuint vert;
@@ -107,6 +110,16 @@ GLuint Cube::loadShaderPair(char * vertsrc, char * fragsrc){
 	return program;
 }
 
+void Cube::onMipmap(){
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
+void Cube::offMipmap(){
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+}
+
 void Cube::init(float offset[3]){
 	static GLbyte * pBits;
 
@@ -131,8 +144,8 @@ void Cube::init(float offset[3]){
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	offMipmap();
 
 	glGenBuffers(1, vertbuffID);
 	glGenBuffers(1, normbuffID);

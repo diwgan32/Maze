@@ -42,7 +42,7 @@ int numBlocks = 0;
 
 bool keys[256];
 
-bool escDown;
+bool escDown, isMipmap;
 
 void ChangeSize(int w, int h)
 {
@@ -142,6 +142,13 @@ void ProcessSceneInfo(void){
 	if(!escDown)
 		glutWarpPointer(940/2,800/2);
 
+	if(isMipmap)
+		for(int i = 0; i < 20*20; i++)
+			model[i].onMipmap();
+	else
+		for(int i = 0; i < 20*20; i++)
+			model[i].offMipmap();
+
 	glutPostRedisplay();
 }
 
@@ -150,6 +157,8 @@ void DownKeys(unsigned char key, int x, int y){
 
 	if(key == 27)
 		escDown = !escDown;
+	if(key == 'm')
+		isMipmap = !isMipmap;
 }
 
 void UpKeys(unsigned char key, int x, int y){

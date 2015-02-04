@@ -8,6 +8,19 @@ using namespace std;
 class Cube
 {
 public:
+	Cube(void);
+	~Cube(void);
+
+	void init(float[]);
+	void bind(GLenum, GLenum);
+	void draw(GLGeometryTransform);
+
+	void onMipmap();
+	void offMipmap();
+
+private:
+	static GLuint loadShaderPair(char *, char *);
+
 	typedef float * Array;
 
 	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture;
@@ -24,14 +37,6 @@ public:
 	GLuint vertbuffID[1], normbuffID[1], texbuffID[1];
 
 	int total, vsize, nsize, tsize; 
-
-	Cube(void);
-
-	static GLuint loadShaderPair(char *, char *);
-
-	void init(float[]);
-	void bind(GLenum, GLenum);
-	void draw(GLGeometryTransform);
 };
 
 #endif
