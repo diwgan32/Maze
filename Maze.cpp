@@ -23,6 +23,9 @@
 #define MOVE_SPEED 0.02f
 #define ROTATE_SPEED 0.1f
 
+#define START_WIDTH 940
+#define START_HEIGHT 800
+
 using namespace std;
 
 Cube * model;
@@ -44,10 +47,18 @@ bool keys[256];
 
 bool escDown, isMipmap;
 
-void ChangeSize(int w, int h)
+int width, height;
+
+int frame=0,time,timebase=0;
+float fps;
+
+void changeSize(int w, int h)
 {
 	if(h == 0)
 		h = 1;
+
+	width = w;
+	height = h;
 
 	glViewport(0, 0, w, h);
 
@@ -55,10 +66,10 @@ void ChangeSize(int w, int h)
 	projectionMatrix.LoadMatrix(viewFrustum.GetProjectionMatrix());
 	transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 	modelViewMatrix.LoadIdentity();
-	
+
 }
 
-void SetupRC(void/*HINSTANCE hInstance*/)
+void setupRC(void/*HINSTANCE hInstance*/)
 {
 	glEnable(GL_DEPTH_TEST);
 
@@ -101,9 +112,9 @@ void SetupRC(void/*HINSTANCE hInstance*/)
 						}
 }
 
-void RenderScene(void)
+void renderScene(void)
 {
-	ProcessSceneInfo();
+	processSceneInfo();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -120,12 +131,44 @@ void RenderScene(void)
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
+	renderText("FPS: ");
+
 	modelViewMatrix.PopMatrix();
 
 	glutSwapBuffers();
 }
 
-void ProcessSceneInfo(void){
+void renderText(char * p){
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	gluOrtho2D(0.0, width, 0.0, height);
+
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+
+	glColor3f(0.0, 1.0, 0.0); // Green
+
+	glRasterPos2i(10, 10);
+
+	string s = p;
+	void * font = GLUT_BITMAP_9_BY_15;
+
+	for (string::iterator i = s.begin(); i != s.end(); ++i)
+	{
+		char c = *i;
+		glutBitmapCharacter(font, c);
+	}
+
+	glMatrixMode(GL_MODELVIEW);
+	glPopMatrix();
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+}
+
+void processSceneInfo(void){
 	if(keys['w'] || keys['W']){
 		camera_position[2] += MOVE_SPEED;
 		camera_position[0] += -rot[2]*MOVE_SPEED*.02;
@@ -138,13 +181,13 @@ void ProcessSceneInfo(void){
 		camera_position[0] += MOVE_SPEED;
 	if(keys['d'] || keys['D'])
 		camera_position[0] -= MOVE_SPEED;
-		if(keys['e'] || keys['E'])
+	if(keys['e'] || keys['E'])
 		camera_position[1] -= MOVE_SPEED;
 	if(keys['c'] || keys['C'])
 		camera_position[1] += MOVE_SPEED;
 
 	if(!escDown)
-		glutWarpPointer(940/2,800/2);
+		glutWarpPointer(width / 2, height / 2);
 
 	if(isMipmap)
 		for(int i = 0; i < 20*20; i++)
@@ -156,7 +199,7 @@ void ProcessSceneInfo(void){
 	glutPostRedisplay();
 }
 
-void DownKeys(unsigned char key, int x, int y){
+void downKeys(unsigned char key, int x, int y){
 	keys[key] = true;
 
 	if(key == 27)
@@ -165,26 +208,37 @@ void DownKeys(unsigned char key, int x, int y){
 		isMipmap = !isMipmap;
 }
 
-void UpKeys(unsigned char key, int x, int y){
+void upKeys(unsigned char key, int x, int y){
 	keys[key] = false;
 }
 
-void MouseFuction(int x, int y){
+void mouseFuction(int x, int y){
 	if(escDown)
 		return;
 
-	float new_x = x-(940/2);
-	float new_y = y-(800/2);
+	float new_x = x-(width/2);
+	float new_y = y-(height/2);
 
 	//if (abs(new_x) < 100 && abs(new_y) < 100){
 	//	rot[0] = 0;
 	//	rot[2] = 0;
 	//}else{
-		
-		rot[0] += new_y*ROTATE_SPEED;
-		rot[2] += new_x*ROTATE_SPEED;
+
+	rot[0] += new_y*ROTATE_SPEED;
+	rot[2] += new_x*ROTATE_SPEED;
 	//}
-	
+
+}
+
+void countFPS(){
+	frame++;
+	time=glutGet(GLUT_ELAPSED_TIME);
+
+	if (time - timebase > 1000) {
+		fps = (float)(frame*1000.0/(time-timebase));
+	 	timebase = time;
+		frame = 0;
+	}
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -195,15 +249,17 @@ int main(int argc, char * argv[])
 
 	glutInit(&argc, argv);
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
-	glutInitWindowSize(940, 800);
+	glutInitWindowSize(START_WIDTH, START_HEIGHT);
 
 	glutCreateWindow("Triangle");
 
-	glutReshapeFunc(ChangeSize);
-	glutDisplayFunc(RenderScene);
-	glutKeyboardFunc(DownKeys);
-	glutKeyboardUpFunc(UpKeys);
-	glutPassiveMotionFunc(MouseFuction);
+	glutIdleFunc(countFPS);
+	glutReshapeFunc(changeSize);
+	glutDisplayFunc(renderScene);
+	glutKeyboardFunc(downKeys);
+	glutKeyboardUpFunc(upKeys);
+	glutPassiveMotionFunc(mouseFuction);
+
 	GLenum err = glewInit();
 
 	if (GLEW_OK != err) {
@@ -211,7 +267,7 @@ int main(int argc, char * argv[])
 		return 1;
 	}
 
-	SetupRC();
+	setupRC();
 
 	glutMainLoop();
 	return 0;

@@ -3,12 +3,14 @@
 
 #include "stdafx.h"
 
-void ChangeSize(int, int);
-void SetupRC(void/*HINSTANCE hInstance*/);
-void RenderScene(void);
+void changeSize(int, int);
+void setupRC(void/*HINSTANCE hInstance*/);
+void renderScene(void);
 
-void ProcessSceneInfo(void);
-void DownKeys(unsigned char, int, int);
-void UpKeys(unsigned char, int, int);
+void countFPS(void);
+void renderText(char *);
+void processSceneInfo(void);
+void downKeys(unsigned char, int, int);
+void upKeys(unsigned char, int, int);
 
 #endif
