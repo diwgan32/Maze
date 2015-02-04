@@ -170,12 +170,20 @@ void renderText(char * p){
 
 void processSceneInfo(void){
 	if(keys['w'] || keys['W']){
-		camera_position[2] += MOVE_SPEED;
-		camera_position[0] += -rot[2]*MOVE_SPEED*.02;
+		camera_position[0] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
+		camera_position[2] += cos((3.14/180)*rot[2])*MOVE_SPEED;
 	}
 	if(keys['s'] || keys['S']){
-		camera_position[2] -= MOVE_SPEED;
-		camera_position[0] += rot[2]*MOVE_SPEED*.02;
+		camera_position[0] += sin((3.14/180)*rot[2])*MOVE_SPEED;
+		camera_position[2] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
+	}
+	if(keys['a'] || keys['A']){
+	camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
+		camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
+	}
+	if(keys['d'] || keys['D']){
+		camera_position[0] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
+		camera_position[2] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
 	}
 	if(keys['a'] || keys['A'])
 		camera_position[0] += MOVE_SPEED;
@@ -195,8 +203,10 @@ void processSceneInfo(void){
 	else
 		for(int i = 0; i < 20*20; i++)
 			model[i].offMipmap();
-
+	num++;
+	num%=10;
 	glutPostRedisplay();
+
 }
 
 void downKeys(unsigned char key, int x, int y){
