@@ -140,8 +140,6 @@ void renderScene(void)
 }
 
 void renderText(char * p){
-	glDisable(GL_TEXTURE_2D);
-
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
@@ -151,24 +149,31 @@ void renderText(char * p){
 	glPushMatrix();
 	glLoadIdentity();
 
+	glPushAttrib(GL_CURRENT_BIT);
+
+	glColor3f(0.0f, 1.0f, 0.0f); // Green
+	glDisable(GL_LIGHTING);
 	glRasterPos2i(10, height - 20);
 
 	string s = p;
 	void * font = GLUT_BITMAP_9_BY_15;
 
+	glDisable(GL_TEXTURE_2D);
 	for (string::iterator i = s.begin(); i != s.end(); ++i)
 	{
 		char c = *i;
-		glColor3d(0.0, 1.0, 0.0); // Green
 		glutBitmapCharacter(font, c);
 	}
+
+	glEnable(GL_TEXTURE_2D);
+
+	glEnable(GL_LIGHTING);
+	glPopAttrib();
 
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
-
-	glEnable(GL_TEXTURE_2D);
 }
 
 void processSceneInfo(void){
@@ -181,7 +186,7 @@ void processSceneInfo(void){
 		camera_position[2] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
 	}
 	if(keys['a'] || keys['A']){
-	camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
+		camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
 		camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
 	}
 	if(keys['d'] || keys['D']){
@@ -241,7 +246,7 @@ void countFPS(){
 
 	if (time - timebase > 1000) {
 		fps = (float)(frame*1000.0/(time-timebase));
-	 	timebase = time;
+		timebase = time;
 		frame = 0;
 	}
 }
