@@ -18,6 +18,9 @@ public:
 	void onMipmap();
 	void offMipmap();
 
+	void onAniso(GLfloat);
+	void offAniso();
+
 private:
 	static GLuint loadShaderPair(char *, char *);
 

@@ -34,6 +34,8 @@ GLFrustum           viewFrustum;
 GLMatrixStack       modelViewMatrix;
 GLMatrixStack       projectionMatrix;
 
+GLfloat fLargest;
+
 GLGeometryTransform transformPipeline;
 
 float camera_position[] = {0, 0, 0};
@@ -45,7 +47,7 @@ int numBlocks = 0;
 
 bool keys[256];
 
-bool escDown, isMipmap;
+bool escDown, isMipmap, isAniso, canAniso;
 
 int width, height;
 
@@ -72,6 +74,12 @@ void changeSize(int w, int h)
 void setupRC(void/*HINSTANCE hInstance*/)
 {
 	glEnable(GL_DEPTH_TEST);
+
+	if(gltIsExtSupported("GL_EXT_texture_filter_anisotropic")){
+		canAniso = true;
+
+		glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &fLargest);
+	}
 
 	BMP maze;
 	maze.ReadFromFile("easybmp1.bmp");
@@ -201,12 +209,21 @@ void processSceneInfo(void){
 	if(!escDown)
 		glutWarpPointer(width / 2, height / 2);
 
-	if(isMipmap)
-		for(int i = 0; i < 20*20; i++)
-			model[i].onMipmap();
-	else
-		for(int i = 0; i < 20*20; i++)
-			model[i].offMipmap();
+	if(keys['m'] || keys['M'])
+		if(isMipmap)
+			for(int i = 0; i < 20*20; i++)
+				model[i].onMipmap();
+		else
+			for(int i = 0; i < 20*20; i++)
+				model[i].offMipmap();
+
+	if(keys['n'] || keys['N'])
+		if(isAniso)
+			for(int i = 0; i < 20*20; i++)
+				model[i].onAniso(fLargest);
+		else
+			for(int i = 0; i < 20*20; i++)
+				model[i].offAniso();
 }
 
 void downKeys(unsigned char key, int x, int y){
@@ -216,6 +233,8 @@ void downKeys(unsigned char key, int x, int y){
 		escDown = !escDown;
 	if(key == 'm')
 		isMipmap = !isMipmap;
+	if(key == 'n' && canAniso)
+		isAniso = !isAniso;
 }
 
 void upKeys(unsigned char key, int x, int y){

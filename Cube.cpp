@@ -120,6 +120,14 @@ void Cube::offMipmap(){
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
+void Cube::onAniso(GLfloat f){
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
+}
+
+void Cube::offAniso(){
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
+}
+
 void Cube::init(float offset[3]){
 	static GLbyte * pBits;
 
