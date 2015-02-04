@@ -170,6 +170,9 @@ void UpKeys(unsigned char key, int x, int y){
 }
 
 void MouseFuction(int x, int y){
+	if(escDown)
+		return;
+
 	float new_x = x-(940/2);
 	float new_y = y-(800/2);
 
@@ -178,8 +181,8 @@ void MouseFuction(int x, int y){
 	//	rot[2] = 0;
 	//}else{
 		
-		rot[0] = new_y*ROTATE_SPEED;
-		rot[2] = new_x*ROTATE_SPEED;
+		rot[0] += new_y*ROTATE_SPEED;
+		rot[2] += new_x*ROTATE_SPEED;
 	//}
 	
 }
