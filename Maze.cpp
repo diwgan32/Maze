@@ -142,7 +142,7 @@ void renderScene(void)
 	char topText[256];
 	sprintf(topText, "FPS: %d", (int) fps);
 
-	renderText(topText);
+	renderText(topText, 10, height - 20);
 
 	modelViewMatrix.PopMatrix();
 
@@ -150,40 +150,48 @@ void renderScene(void)
 	glutPostRedisplay();
 }
 
-void renderText(char * p){
+void renderText(char * p, int x, int y){
+	double old_modelview[16];
+
 	glMatrixMode(GL_PROJECTION);
-	glPushMatrix();
+	glGetDoublev(GL_PROJECTION_MATRIX, old_modelview);
 	glLoadIdentity();
-	gluOrtho2D(0.0, width, 0.0, height);
+	glOrtho(0.0, width, 0.0, height, -1.0, 1.0);
 
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 	glLoadIdentity();
 
-	glPushAttrib(GL_CURRENT_BIT);
+    glPushAttrib(GL_DEPTH_BUFFER_BIT);
+    glDisable(GL_DEPTH_TEST);
+    glDepthMask(GL_FALSE); 
 
 	glColor3f(0.0f, 1.0f, 0.0f); // Green
-	glDisable(GL_LIGHTING);
-	glRasterPos2i(10, height - 20);
+	glRasterPos2i(x, y);
 
 	string s = p;
 	void * font = GLUT_BITMAP_9_BY_15;
 
+	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
+
 	for (string::iterator i = s.begin(); i != s.end(); ++i)
 	{
 		char c = *i;
+		//cout << c;
 		glutBitmapCharacter(font, c);
 	}
 
-	glEnable(GL_TEXTURE_2D);
+	//cout << endl;
 
+	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_LIGHTING);
+
 	glPopAttrib();
 
-	glMatrixMode(GL_MODELVIEW);
-	glPopMatrix();
 	glMatrixMode(GL_PROJECTION);
+    glLoadMatrixd(old_modelview);
+	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 }
 
@@ -245,8 +253,10 @@ void upKeys(unsigned char key, int x, int y){
 }
 
 void mouseFuction(int x, int y){
-	if(escDown)
+	if(escDown){
+		renderText("PAUSED", width/2, height/2);
 		return;
+	}
 
 	float new_x = x-(width/2);
 	float new_y = y-(height/2);
