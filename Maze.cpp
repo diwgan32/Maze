@@ -50,7 +50,7 @@ bool keys[256];
 bool escDown, isMipmap, isAniso, canAniso;
 
 int width, height;
-
+int map[41][41];
 int frame=0,time,timebase=0;
 float fps;
 
@@ -84,7 +84,7 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	BMP maze;
 	maze.ReadFromFile("easybmp1.bmp");
 
-	int map[41][41];
+	
 	int size = 41;
 
 	for(int i = 0; i<size; i++)
@@ -129,13 +129,16 @@ void renderScene(void)
 	glEnable(GL_DEPTH_TEST);
 
 	modelViewMatrix.PushMatrix();
-
+	//cout << (int)camera_position[0] << " " << (int)camera_position[2] << endl;
+	
 	modelViewMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
 	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);
 
 	//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-	modelViewMatrix.Translate(camera_position[0]-5, camera_position[1]-1, camera_position[2]-5);
-
+	if(!map[ abs((int)camera_position[2]) ][abs((int)camera_position[0])] == 1){
+		cout << "hi" << endl;
+	}
+modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
