@@ -84,8 +84,8 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	BMP maze;
 	maze.ReadFromFile("easybmp1.bmp");
 
-	int map[81][81];
-	int size = 81;
+	int map[41][41];
+	int size = 41;
 
 	for(int i = 0; i<size; i++)
 		for(int j = 0; j<size; j++)
@@ -139,7 +139,10 @@ void renderScene(void)
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
-	renderText("FPS: ");
+	char topText[256];
+	sprintf(topText, "FPS: %d", (int) fps);
+
+	renderText(topText);
 
 	modelViewMatrix.PopMatrix();
 
