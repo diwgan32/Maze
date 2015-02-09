@@ -203,7 +203,7 @@ void Cube::bind(GLenum buff_type, GLenum draw_type){
 	glBufferData(buff_type, T_SIZE*FLOAT_SZ, final_text, draw_type);
 
 	if(readShader == false){
-		shader = Cube::loadShaderPair("ADSTexture.vp", "ADSTexture.fp");
+		shader = Cube::loadShaderPair("shaders/ADSPhong.vp", "shaders/ADSPhong.fp");
 
 		glBindAttribLocation(shader, 0, "vVertex");
 		glBindAttribLocation(shader, 1, "vNormal");

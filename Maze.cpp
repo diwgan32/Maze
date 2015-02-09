@@ -135,9 +135,9 @@ void renderScene(void)
 	
 	float * camera_vector = new float[3];
 	
-	if(map[ abs((int)camera_position[2]) ][abs((int)camera_position[0])] == 1){
-		camera_position[0] -= cos((3.14159/180)*rot[2]);
-		camera_position[2] -= sin(3.14159/180)*rot[2];
+	if(map[abs((int)camera_position[2])][abs((int)camera_position[0])] == 1){
+		camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
+		camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 	}
 	else{

@@ -9,10 +9,11 @@ out vec4 vFragColor;
 uniform vec4    ambientColor;
 uniform vec4    diffuseColor;   
 uniform vec4    specularColor;
+uniform sampler2D colorMap;
 
 smooth in vec3 vVaryingNormal;
 smooth in vec3 vVaryingLightDir;
-
+smooth in vec2 vTexCoords;
 
 void main(void)
     { 
@@ -25,6 +26,8 @@ void main(void)
     // Add in ambient light
     vFragColor += ambientColor;
 
+	// Modulate in the texture
+    vFragColor *= texture2D(colorMap, vTexCoords);
 
     // Specular Light
     vec3 vReflection = normalize(reflect(-normalize(vVaryingLightDir), normalize(vVaryingNormal)));

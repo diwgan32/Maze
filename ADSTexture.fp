@@ -16,7 +16,7 @@ smooth in vec3 vVaryingLightDir;
 smooth in vec2 vTexCoords;
 
 void main(void)
-    { 
+{ 
     // Dot product gives us diffuse intensity
     float diff = max(0.0, dot(normalize(vVaryingNormal), normalize(vVaryingLightDir)));
 
@@ -35,6 +35,6 @@ void main(void)
     if(diff != 0) {
         float fSpec = pow(spec, 128.0);
         vFragColor.rgb += vec3(fSpec, fSpec, fSpec);
-        }
     }
+}
     
