@@ -20,7 +20,7 @@
 #include <GL/glut.h>            // Windows FreeGlut equivalent
 #endif
 
-#define MOVE_SPEED 0.1f
+#define MOVE_SPEED 0.04f
 #define ROTATE_SPEED 0.1f
 
 #define START_WIDTH 940
@@ -129,16 +129,20 @@ void renderScene(void)
 	glEnable(GL_DEPTH_TEST);
 
 	modelViewMatrix.PushMatrix();
-	//cout << (int)camera_position[0] << " " << (int)camera_position[2] << endl;
 	
 	modelViewMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
-	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);
-
-	//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-	if(!map[ abs((int)camera_position[2]) ][abs((int)camera_position[0])] == 1){
-		cout << "hi" << endl;
+	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);	
+	
+	float * camera_vector = new float[3];
+	
+	if(map[ abs((int)camera_position[2]) ][abs((int)camera_position[0])] == 1){
+		camera_position[0] -= cos((3.14159/180)*rot[2]);
+		camera_position[2] -= sin(3.14159/180)*rot[2];
+		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 	}
+	else{
 modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	}
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
