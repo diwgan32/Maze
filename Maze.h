@@ -6,6 +6,7 @@
 void changeSize(int, int);
 void setupRC(void/*HINSTANCE hInstance*/);
 void renderScene(void);
+void destroy(void);
 
 void countFPS(void);
 void renderText(char *, int, int);
