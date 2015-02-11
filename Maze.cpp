@@ -134,15 +134,22 @@ void renderScene(void)
 	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);	
 	
 	float * camera_vector = new float[3];
-	
-	if(map[abs((int)camera_position[2])][abs((int)camera_position[0])] == 1){
-		camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
+	for(int i = 0; i<numBlocks; i++){
+		if(-camera_position[0] < model[i].hitBox.greatestX && -camera_position[0] > model[i].hitBox.leastX && -camera_position[2] < model[i].hitBox.greatestY && -camera_position[2] > model[i].hitBox.leastY){
+			camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
 		camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+			break;
+		}
 	}
-	else{
+	//if(map[abs((int)camera_position[2])][abs((int)camera_position[0])] == 1){
+		//camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
+		//camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
+		//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	//}
+	//else{
 modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-	}
+	//}
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
@@ -308,7 +315,7 @@ int main(int argc, char * argv[])
 	glutKeyboardFunc(downKeys);
 	glutKeyboardUpFunc(upKeys);
 	glutPassiveMotionFunc(mouseFuction);
-
+	
 	GLenum err = glewInit();
 
 	if (GLEW_OK != err) {

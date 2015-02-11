@@ -5,7 +5,7 @@
 
 #define VERT_TOTAL 24
 
-#define V_SIZE (VERT_TOTAL * 4)
+#define V_SIZE 72
 #define N_SIZE (VERT_TOTAL * 4)
 #define T_SIZE (VERT_TOTAL * 2)
 
@@ -180,16 +180,51 @@ void Cube::init(float offset[3]){
 		0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
 		0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0};
 
-	final_vert = new float[V_SIZE];
+	final_vert = new float[72];
+
 	norm_final = new float[N_SIZE];
 	final_text = new float[T_SIZE];
 
 	for(int i = 0; i<V_SIZE; i++){
 		final_vert[i] = VERTS[i] + offset[i % 3];
+	
 		norm_final[i] = NORM[i];
 	}
 	for(int i = 0; i<T_SIZE; i++)
 		final_text[i] = TEX[i];
+
+	float greatest = -99;
+	for(int i = 0; i<V_SIZE; i+=3){
+		if(final_vert[i] > greatest){
+			greatest = final_vert[i];
+		}
+	}
+	hitBox.greatestX = greatest;
+	greatest = -99;
+	for(int i = 2; i<V_SIZE; i+=3){
+		if(final_vert[i] > greatest){
+			greatest = final_vert[i];
+		}
+	}
+	hitBox.greatestY = greatest;
+	float least = 999;
+	for(int i = 0; i<V_SIZE; i+=3){
+		if(!(i >= V_SIZE)){
+		if(final_vert[i] < least){
+			least= final_vert[i];
+
+		}
+		}
+	}
+	cout << least << endl;
+	hitBox.leastX = least;
+	least = 99;
+	for(int i = 2; i<V_SIZE; i+=3){
+		if(final_vert[i] < least){
+			least= final_vert[i];
+		}
+	}
+	hitBox.leastY = least;
 }
 
 void Cube::bind(GLenum buff_type, GLenum draw_type){

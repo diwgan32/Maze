@@ -5,6 +5,12 @@
 
 using namespace std;
 
+struct box{
+	float greatestX;
+	float leastX;
+	float greatestY;
+	float leastY;
+};
 class Cube
 {
 public:
@@ -20,7 +26,7 @@ public:
 
 	void onAniso(GLfloat);
 	void offAniso();
-
+	box hitBox;
 private:
 	static GLuint loadShaderPair(char *, char *);
 
