@@ -142,18 +142,19 @@ void renderScene(void)
 	for(int i = 0; i<numBlocks; i++){
 		if(-camera_position[0] < model[i].hitBox.greatestX && -camera_position[0] > model[i].hitBox.leastX && -camera_position[2] < model[i].hitBox.greatestY && -camera_position[2] > model[i].hitBox.leastY){
 			camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
-		camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
-		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+			camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
+			modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 			break;
 		}
 	}
 
-	floorModel->draw(transformPipeline);
-
-		//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 	//}
 	//else{
-modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+
+	floorModel->draw(transformPipeline);
+
 	//}
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
@@ -259,8 +260,10 @@ void processSceneInfo(void){
 void downKeys(unsigned char key, int x, int y){
 	keys[key] = true;
 
-	if(key == 27)
+	if(key == 27){
 		escDown = !escDown;
+		glutSetCursor(escDown ? GLUT_CURSOR_LEFT_ARROW : GLUT_CURSOR_CROSSHAIR);
+	}
 	if(key == 'm')
 		isMipmap = !isMipmap;
 	if(key == 'n' && canAniso)
@@ -320,7 +323,9 @@ int main(int argc, char * argv[])
 	glutKeyboardFunc(downKeys);
 	glutKeyboardUpFunc(upKeys);
 	glutPassiveMotionFunc(mouseFuction);
-	
+
+	glutSetCursor(GLUT_CURSOR_CROSSHAIR);
+
 	GLenum err = glewInit();
 
 	if (GLEW_OK != err) {
