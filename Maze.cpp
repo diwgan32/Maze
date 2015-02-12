@@ -243,20 +243,27 @@ void processSceneInfo(void){
 		glutWarpPointer(width / 2, height / 2);
 
 	if(keys['m'] || keys['M'])
-		if(isMipmap)
+		if(isMipmap){
 			for(int i = 0; i < 20*20; i++)
 				model[i].onMipmap();
-		else
+			floorModel->onMipmap();
+		}else{
 			for(int i = 0; i < 20*20; i++)
 				model[i].offMipmap();
+			floorModel->offMipmap();
+		}
 
-	if(keys['n'] || keys['N'])
-		if(isAniso)
-			for(int i = 0; i < 20*20; i++)
-				model[i].onAniso(fLargest);
-		else
-			for(int i = 0; i < 20*20; i++)
-				model[i].offAniso();
+		if(keys['n'] || keys['N'])
+			if(isAniso){
+				for(int i = 0; i < 20*20; i++)
+					model[i].onAniso(fLargest);
+				floorModel->onAniso(fLargest);
+			}
+			else{
+				for(int i = 0; i < 20*20; i++)
+					model[i].offAniso();
+				floorModel->offAniso();
+			}
 }
 
 void downKeys(unsigned char key, int x, int y){

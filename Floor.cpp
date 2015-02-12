@@ -113,20 +113,24 @@ GLuint Floor::loadShaderPair(char * vertsrc, char * fragsrc){
 }
 
 void Floor::onMipmap(){
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Floor::offMipmap(){
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Floor::onAniso(GLfloat f){
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
 }
 
 void Floor::offAniso(){
+	glBindTexture(GL_TEXTURE_2D, textureID);
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
 }
 
