@@ -5,6 +5,7 @@
 
 #include "Maze.h"
 #include "Cube.h"
+#include "Floor.h"
 
 #include "EasyBMP\EasyBMP.h"
 
@@ -29,6 +30,7 @@
 using namespace std;
 
 Cube * model;
+Floor * floorModel;
 
 GLFrustum           viewFrustum;
 GLMatrixStack       modelViewMatrix;
@@ -84,7 +86,10 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	BMP maze;
 	maze.ReadFromFile("easybmp1.bmp");
 
-	
+	floorModel = new Floor();
+	floorModel->init();
+	floorModel->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
+
 	int size = 41;
 
 	for(int i = 0; i<size; i++)
@@ -129,10 +134,10 @@ void renderScene(void)
 	glEnable(GL_DEPTH_TEST);
 
 	modelViewMatrix.PushMatrix();
-	
+
 	modelViewMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
 	modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);	
-	
+
 	float * camera_vector = new float[3];
 	for(int i = 0; i<numBlocks; i++){
 		if(-camera_position[0] < model[i].hitBox.greatestX && -camera_position[0] > model[i].hitBox.leastX && -camera_position[2] < model[i].hitBox.greatestY && -camera_position[2] > model[i].hitBox.leastY){
@@ -142,9 +147,9 @@ void renderScene(void)
 			break;
 		}
 	}
-	//if(map[abs((int)camera_position[2])][abs((int)camera_position[0])] == 1){
-		//camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
-		//camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
+
+	floorModel->draw(transformPipeline);
+
 		//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 	//}
 	//else{
@@ -176,9 +181,9 @@ void renderText(char * p, int x, int y){
 	glPushMatrix();
 	glLoadIdentity();
 
-    glPushAttrib(GL_DEPTH_BUFFER_BIT);
-    glDisable(GL_DEPTH_TEST);
-    glDepthMask(GL_FALSE); 
+	glPushAttrib(GL_DEPTH_BUFFER_BIT);
+	glDisable(GL_DEPTH_TEST);
+	glDepthMask(GL_FALSE); 
 
 	glColor3f(0.0f, 1.0f, 0.0f); // Green
 	glRasterPos2i(x, y);
@@ -204,7 +209,7 @@ void renderText(char * p, int x, int y){
 	glPopAttrib();
 
 	glMatrixMode(GL_PROJECTION);
-    glLoadMatrixd(old_modelview);
+	glLoadMatrixd(old_modelview);
 	glMatrixMode(GL_MODELVIEW);
 	glPopMatrix();
 }
@@ -307,7 +312,7 @@ int main(int argc, char * argv[])
 	glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGBA | GLUT_DEPTH | GLUT_STENCIL);
 	glutInitWindowSize(START_WIDTH, START_HEIGHT);
 
-	glutCreateWindow("Triangle");
+	glutCreateWindow("Maze");
 
 	glutIdleFunc(countFPS);
 	glutReshapeFunc(changeSize);
