@@ -21,7 +21,7 @@
 #include <GL/glut.h>            // Windows FreeGlut equivalent
 #endif
 
-#define MOVE_SPEED 0.04f
+#define MOVE_SPEED 0.03f
 #define ROTATE_SPEED 0.1f
 
 #define START_WIDTH 940
@@ -48,7 +48,7 @@ GLFrame viewFrame;
 int numBlocks = 0;
 
 bool keys[256];
-
+bool collide = false;
 bool escDown, isMipmap, isAniso, canAniso;
 
 int width, height;
@@ -112,7 +112,6 @@ void setupRC(void/*HINSTANCE hInstance*/)
 
 			int count = 0;
 
-			// cout << numBlocks << endl;
 
 			for(int i = 0; i<size; i++)
 				for(int j = 0; j<size; j++)
@@ -127,6 +126,7 @@ void setupRC(void/*HINSTANCE hInstance*/)
 
 void renderScene(void)
 {
+	collide = false;
 	processSceneInfo();
 
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -140,24 +140,66 @@ void renderScene(void)
 
 	float * camera_vector = new float[3];
 	for(int i = 0; i<numBlocks; i++){
-		if(-(camera_position[0]-27*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-27*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-			-(camera_position[2]+27*cos((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+27*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
-			){
-			camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
-			camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
-			modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-			break;
+		if(keys['W'] || keys['w']){
+			if(-(camera_position[0]-35*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-35*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
+				-(camera_position[2]+35*cos((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+35*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				)
+			{
+				camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
+				camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
+
+
+				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+				collide = true;
+				break;
+			}
+		}
+		if(keys['s'] || keys['S']){
+			if(-(camera_position[0]+35*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-35*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
+				-(camera_position[2]-35*cos((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]-35*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				)
+			{
+				camera_position[0] += -sin((3.1415/180)*rot[2])*MOVE_SPEED;
+				camera_position[2] += cos((3.1415/180)*rot[2])*MOVE_SPEED;
+
+
+				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+				collide = true;
+				break;
+			}
+		}
+		if(keys['A'] || keys['a']){
+			if(-(camera_position[0]+35*cos((3.14/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]+35*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
+				-(camera_position[2]+35*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+35*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				)
+			{
+				camera_position[0] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
+				camera_position[2] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
+
+
+				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+				collide = true;
+				break;
+			}
+		}
+		if(keys['d'] || keys['D']){
+			if(-(camera_position[0]-35*cos((3.14/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-35*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
+				-(camera_position[2]-35*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]-35*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				)
+			{
+				camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
+				camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
+				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+				collide = true;
+				break;
+			}
 		}
 	}
-
-	//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-	//}
-	//else{
-	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+	if(!collide)
+		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 	floorModel->draw(transformPipeline);
 
-	//}
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
