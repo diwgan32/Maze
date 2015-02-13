@@ -17,11 +17,11 @@
 
 #define FLOAT_SZ sizeof(float)
 
-GLuint Floor::shader, Floor::textureID;
+GLuint Floor::shader, Floor::textureID, Floor::normalID;
 
 bool Floor::readTexture, Floor::readShader;
 
-int Floor::locAmbient, Floor::locDiffuse, Floor::locSpecular, Floor::locEyeLight, Floor::locLight, Floor::locTexture;
+int Floor::locAmbient, Floor::locDiffuse, Floor::locSpecular, Floor::locEyeLight, Floor::locLight, Floor::locTexture, Floor::locNormal;
 int Floor::locMVP, Floor::locMV, Floor::locNM;
 
 Floor::Floor(){
@@ -113,42 +113,75 @@ GLuint Floor::loadShaderPair(char * vertsrc, char * fragsrc){
 }
 
 void Floor::onMipmap(){
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Floor::offMipmap(){
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Floor::onAniso(GLfloat f){
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
 }
 
 void Floor::offAniso(){
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
 }
 
 void Floor::init(){
-	static GLbyte * pBits;
+	static GLbyte * pBits, * nBits;
+
+	static int nWidth, nHeight, nComponents;
+	static GLenum eFormat;
+
+	// Texture Map
 
 	glActiveTexture(GL_TEXTURE1);
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	static int nWidth, nHeight, nComponents;
-	static GLenum eFormat;
-
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if(readTexture == false){
 		pBits = gltReadTGABits("dirt.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		nBits = gltReadTGABits("dirt_SSBump.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
 
@@ -158,6 +191,24 @@ void Floor::init(){
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Normal Map
+
+	glActiveTexture(GL_TEXTURE2);
+
+	glGenTextures(1, &normalID);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, nBits);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+	// Other settings
 
 	offMipmap();
 
@@ -211,6 +262,7 @@ void Floor::bind(GLenum buff_type, GLenum draw_type){
 		locDiffuse = glGetUniformLocation(shader, "diffuseColor");
 		locSpecular = glGetUniformLocation(shader, "specularColor");
 		locTexture = glGetUniformLocation(shader, "colorMap");
+		locNormal = glGetUniformLocation(shader, "normalMap");
 		locLight = glGetUniformLocation(shader, "vLightPosition");
 
 		locMVP = glGetUniformLocation(shader, "mvpMatrix");
@@ -230,7 +282,12 @@ void Floor::draw(GLGeometryTransform transformPipeline){
 	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat vSpecularColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glUseProgram(shader);
 
 	glUniform4fv(locAmbient, 1, vAmbientColor);
@@ -243,6 +300,7 @@ void Floor::draw(GLGeometryTransform transformPipeline){
 	glUniformMatrix3fv(locNM, 1, GL_FALSE, transformPipeline.GetNormalMatrix());
 
 	glUniform1i(locTexture, 1);
+	glUniform1i(locNormal, 1);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertbuffID[0]);

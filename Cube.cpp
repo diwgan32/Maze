@@ -15,11 +15,11 @@
 
 #define FLOAT_SZ sizeof(float)
 
-GLuint Cube::shader, Cube::textureID;
+GLuint Cube::shader, Cube::textureID, Cube::normalID;
 
 bool Cube::readTexture, Cube::readShader;
 
-int Cube::locAmbient, Cube::locDiffuse, Cube::locSpecular, Cube::locEyeLight, Cube::locLight, Cube::locTexture;
+int Cube::locAmbient, Cube::locDiffuse, Cube::locSpecular, Cube::locEyeLight, Cube::locLight, Cube::locTexture, Cube::locNormal;
 int Cube::locMVP, Cube::locMV, Cube::locNM;
 
 Cube::Cube(){
@@ -111,38 +111,75 @@ GLuint Cube::loadShaderPair(char * vertsrc, char * fragsrc){
 }
 
 void Cube::onMipmap(){
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Cube::offMipmap(){
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 }
 
 void Cube::onAniso(GLfloat f){
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
 }
 
 void Cube::offAniso(){
+	glActiveTexture(GL_TEXTURE1);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
+
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
 }
 
 void Cube::init(float offset[3]){
-	static GLbyte * pBits;
+	static GLbyte * pBits, * nBits;
+
+	static int nWidth, nHeight, nComponents;
+	static GLenum eFormat;
+
+	// Texture
 
 	glActiveTexture(GL_TEXTURE1);
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	static int nWidth, nHeight, nComponents;
-	static GLenum eFormat;
-
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	if(readTexture == false){
 		pBits = gltReadTGABits("brick_sml_grn1b.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		nBits = gltReadTGABits("brick_sml_grn1b_SSBump.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
 
@@ -152,6 +189,24 @@ void Cube::init(float offset[3]){
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// Normal
+
+	glActiveTexture(GL_TEXTURE2);
+
+	glGenTextures(1, &normalID);
+	glBindTexture(GL_TEXTURE_2D, normalID);
+
+	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, nBits);
+
+	glGenerateMipmap(GL_TEXTURE_2D);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
+	// Other Settings
 
 	offMipmap();
 
@@ -253,6 +308,7 @@ void Cube::bind(GLenum buff_type, GLenum draw_type){
 		locDiffuse = glGetUniformLocation(shader, "diffuseColor");
 		locSpecular = glGetUniformLocation(shader, "specularColor");
 		locTexture = glGetUniformLocation(shader, "colorMap");
+		locNormal = glGetUniformLocation(shader, "normalMap");
 		locLight = glGetUniformLocation(shader, "vLightPosition");
 
 		locMVP = glGetUniformLocation(shader, "mvpMatrix");
@@ -272,7 +328,12 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat vSpecularColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	//glActiveTexture(GL_TEXTURE2);
+	//glBindTexture(GL_TEXTURE_2D, normalID);
+
 	glUseProgram(shader);
 
 	glUniform4fv(locAmbient, 1, vAmbientColor);
@@ -285,6 +346,7 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	glUniformMatrix3fv(locNM, 1, GL_FALSE, transformPipeline.GetNormalMatrix());
 
 	glUniform1i(locTexture, 1);
+	//glUniform1i(locNormal, 1);
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertbuffID[0]);

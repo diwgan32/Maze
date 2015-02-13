@@ -26,12 +26,12 @@ private:
 
 	typedef float * Array;
 
-	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture;
+	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture, locNormal;
 	static int locMVP, locMV, locNM;
 
 	int numFrame;
 
-	static GLuint shader, textureID;
+	static GLuint shader, textureID, normalID;
 
 	static bool readTexture, readShader;
 
