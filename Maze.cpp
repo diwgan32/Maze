@@ -66,7 +66,7 @@ void changeSize(int w, int h)
 
 	glViewport(0, 0, w, h);
 
-	viewFrustum.SetPerspective(35.0f, float(w)/float(h), 1.0f, 1000.0f);
+	viewFrustum.SetPerspective(35.0f, float(w)/float(h), .2f, 1000.0f);
 	projectionMatrix.LoadMatrix(viewFrustum.GetProjectionMatrix());
 	transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 	modelViewMatrix.LoadIdentity();
@@ -151,7 +151,7 @@ void renderScene(void)
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
-				break;
+			
 			}
 		}
 		if(keys['s'] || keys['S']){
@@ -179,7 +179,7 @@ void renderScene(void)
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
-				break;
+				
 			}
 		}
 		if(keys['d'] || keys['D']){
@@ -191,9 +191,10 @@ void renderScene(void)
 				camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
-				break;
+				
 			}
 		}
+		if(collide) break;
 	}
 	if(!collide)
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
