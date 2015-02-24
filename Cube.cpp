@@ -175,8 +175,8 @@ void Cube::init(float offset[3]){
 	}
 
 	// Texture
-	//glActiveTexture(GL_TEXTURE1);
-	//glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE1);
+	glEnable(GL_TEXTURE_2D);
 
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
@@ -184,16 +184,16 @@ void Cube::init(float offset[3]){
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-	glGenerateMipmap(GL_TEXTURE_2D);
-
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBits);
 
+	glGenerateMipmap(GL_TEXTURE_2D);
+
 	// Normal
-	//glActiveTexture(GL_TEXTURE2);
-	//glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE2);
+	glEnable(GL_TEXTURE_2D);
 
 	glGenTextures(1, &normalID);
 	glBindTexture(GL_TEXTURE_2D, normalID);
@@ -201,12 +201,12 @@ void Cube::init(float offset[3]){
 
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+
 	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, nBits);
 
 	glGenerateMipmap(GL_TEXTURE_2D);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	offMipmap();
 
@@ -330,13 +330,13 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 
 	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
-	glUniform1i(locTexture, 1);
+	glUniform1i(locTexture, 2);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	//glActiveTexture(GL_TEXTURE2);
-	//glEnable(GL_TEXTURE_2D);
-	//glUniform1i(locNormal, 2);
-	//glBindTexture(GL_TEXTURE_2D, normalID);
+	glActiveTexture(GL_TEXTURE2);
+	glEnable(GL_TEXTURE_2D);
+	glUniform1i(locNormal, 1);
+	glBindTexture(GL_TEXTURE_2D, normalID);
 
 	glUseProgram(shader);
 
@@ -371,7 +371,7 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 
-	//glActiveTexture(GL_TEXTURE2);
-	//glBindTexture(GL_TEXTURE_2D, 0);
-	//glDisable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE2);
+	glBindTexture(GL_TEXTURE_2D, 0);
+	glDisable(GL_TEXTURE_2D);
 }

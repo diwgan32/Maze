@@ -199,10 +199,10 @@ void renderScene(void)
 	if(!collide)
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
-	//floorModel->draw(transformPipeline);
+	floorModel->draw(transformPipeline);
 
-	//for(int i = 0; i<numBlocks; i++)
-		model[0].draw(transformPipeline);
+	for(int i = 0; i<numBlocks; i++)
+		model[i].draw(transformPipeline);
 
 	char topText[256];
 	sprintf(topText, "FPS: %d", (int) fps);
