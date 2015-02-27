@@ -111,13 +111,13 @@ GLuint Cube::loadShaderPair(char * vertsrc, char * fragsrc){
 }
 
 void Cube::onMipmap(){
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normalID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
@@ -125,13 +125,13 @@ void Cube::onMipmap(){
 }
 
 void Cube::offMipmap(){
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normalID);
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -139,24 +139,24 @@ void Cube::offMipmap(){
 }
 
 void Cube::onAniso(GLfloat f){
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normalID);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
 }
 
 void Cube::offAniso(){
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, normalID);
 
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, 1.0f);
@@ -175,7 +175,7 @@ void Cube::init(float offset[3]){
 	}
 
 	// Texture
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
 
 	glGenTextures(1, &textureID);
@@ -192,7 +192,7 @@ void Cube::init(float offset[3]){
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	// Normal
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
 
 	glGenTextures(1, &normalID);
@@ -323,17 +323,17 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	static GLfloat vLightPos[] = { 2.0f, 2.0f, 0.0f };
 	const GLfloat vWhite[] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	GLfloat vEyeLight[] = {-100.0f, -100.0f, -100.0f};
+	GLfloat vEyeLight[] = {0.0f, 1.0f, 0.0f};
 	GLfloat vAmbientColor[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat vSpecularColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
-	glUniform1i(locTexture, 2);
+	glUniform1i(locTexture, 0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glEnable(GL_TEXTURE_2D);
 	glUniform1i(locNormal, 1);
 	glBindTexture(GL_TEXTURE_2D, normalID);
@@ -367,11 +367,11 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 	glDisableVertexAttribArray(1);
 	glDisableVertexAttribArray(2);
 
-	glActiveTexture(GL_TEXTURE1);
+	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 
-	glActiveTexture(GL_TEXTURE2);
+	glActiveTexture(GL_TEXTURE1);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
 }
