@@ -8,6 +8,7 @@
 #define V_SIZE 72
 #define N_SIZE (VERT_TOTAL * 4)
 #define T_SIZE (VERT_TOTAL * 2)
+#define TG_SIZE N_SIZE
 
 #define V_COORD_SZ 3
 #define N_COORD_SZ 3
@@ -15,7 +16,7 @@
 
 #define FLOAT_SZ sizeof(float)
 
-GLuint Cube::shader, Cube::textureID, Cube::normalID;
+GLuint Cube::shader, Cube::textureID, Cube::normalID, Cube::tangentID, Cube::bitangentID;
 
 bool Cube::readTexture, Cube::readShader;
 
@@ -213,6 +214,8 @@ void Cube::init(float offset[3]){
 	glGenBuffers(1, vertbuffID);
 	glGenBuffers(1, normbuffID);
 	glGenBuffers(1, texbuffID);
+	glGenBuffers(1, tangentbuffID);
+	glGenBuffers(1, bitangentbuffID);
 
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
@@ -291,6 +294,12 @@ void Cube::bind(GLenum buff_type, GLenum draw_type){
 
 	glBindBuffer(buff_type, texbuffID[0]);
 	glBufferData(buff_type, T_SIZE*FLOAT_SZ, final_text, draw_type);
+
+	glBindBuffer(buff_type, tangentbuffID[0]);
+	glBufferData(buff_type, TG_SIZE*FLOAT_SZ, tangent_final, draw_type);
+
+	glBindBuffer(buff_type, bitangentbuffID[0]);
+	glBufferData(buff_type, TG_SIZE*FLOAT_SZ, bitangent_final, draw_type);
 
 	if(readShader == false){
 		shader = Cube::loadShaderPair("shaders/ADSPhong.vp", "shaders/ADSPhong.fp");

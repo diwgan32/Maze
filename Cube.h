@@ -37,13 +37,13 @@ private:
 
 	int numFrame;
 
-	static GLuint shader, textureID, normalID;
+	static GLuint shader, textureID, normalID, tangentID, bitangentID;
 
 	static bool readTexture, readShader;
 
-	Array final_vert, final_text, norm_final;
+	Array final_vert, final_text, norm_final, tangent_final, bitangent_final;
 
-	GLuint vertbuffID[1], normbuffID[1], texbuffID[1];
+	GLuint vertbuffID[1], normbuffID[1], texbuffID[1], tangentbuffID[1], bitangentbuffID[1];
 
 	int total, vsize, nsize, tsize; 
 };
