@@ -16,7 +16,7 @@
 
 #define FLOAT_SZ sizeof(float)
 
-GLuint Cube::shader, Cube::textureID, Cube::normalID, Cube::tangentID, Cube::bitangentID;
+GLuint Cube::shader, Cube::textureID, Cube::normalID;
 
 bool Cube::readTexture, Cube::readShader;
 
@@ -214,8 +214,6 @@ void Cube::init(float offset[3]){
 	glGenBuffers(1, vertbuffID);
 	glGenBuffers(1, normbuffID);
 	glGenBuffers(1, texbuffID);
-	glGenBuffers(1, tangentbuffID);
-	glGenBuffers(1, bitangentbuffID);
 
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
 
@@ -295,12 +293,6 @@ void Cube::bind(GLenum buff_type, GLenum draw_type){
 	glBindBuffer(buff_type, texbuffID[0]);
 	glBufferData(buff_type, T_SIZE*FLOAT_SZ, final_text, draw_type);
 
-	glBindBuffer(buff_type, tangentbuffID[0]);
-	glBufferData(buff_type, TG_SIZE*FLOAT_SZ, tangent_final, draw_type);
-
-	glBindBuffer(buff_type, bitangentbuffID[0]);
-	glBufferData(buff_type, TG_SIZE*FLOAT_SZ, bitangent_final, draw_type);
-
 	if(readShader == false){
 		shader = Cube::loadShaderPair("shaders/ADSPhong.vp", "shaders/ADSPhong.fp");
 
@@ -329,10 +321,10 @@ void Cube::bind(GLenum buff_type, GLenum draw_type){
 }
 
 void Cube::draw(GLGeometryTransform transformPipeline){
-	static GLfloat vLightPos[] = { 2.0f, 2.0f, 0.0f };
+	static GLfloat vLightPos[] = { final_vert[0] - 0.5f, final_vert[1], final_vert[2] - 0.5f };
 	const GLfloat vWhite[] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	GLfloat vEyeLight[] = {0.0f, 1.0f, 0.0f};
+	GLfloat vEyeLight[] = {1.0f, -1.0f, 1.0f};
 	GLfloat vAmbientColor[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat vSpecularColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
