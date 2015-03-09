@@ -92,36 +92,44 @@ void setupRC(void/*HINSTANCE hInstance*/)
 
 	int size = 41;
 
-	for(int i = 0; i<size; i++)
-		for(int j = 0; j<size; j++)
+	for(int i = 0; i<size; i++){
+		for(int j = 0; j<size; j++){
 			if(maze(i, j)->Red == 0){
 				map[i][j] = 1;
 				numBlocks++;
-			}else
+			}else{
 				map[i][j] = 0;
+			}
+		}
+	}
+	numBlocks *= 2;
 
-			numBlocks *= 2;
+	model = new Cube[numBlocks+1];
 
-			model = new Cube[numBlocks];
+	viewFrame.MoveForward(3.0f);
+	viewFrame.MoveRight(.0f);
+	viewFrame.MoveUp(0.0f);
 
-			viewFrame.MoveForward(3.0f);
-			viewFrame.MoveRight(.0f);
-			viewFrame.MoveUp(0.0f);
+	viewFrame.RotateLocalY(m3dDegToRad(180));
 
-			viewFrame.RotateLocalY(m3dDegToRad(180));
-
-			int count = 0;
+	int count = 0;
 
 
-			for(int i = 0; i<size; i++)
-				for(int j = 0; j<size; j++)
-					if(map[i][j] == 1)
-						for(int k = 0; k<2; k++){
-							float offset[] = {i, k, j};
-							model[count].init(offset);
-							model[count].bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
-							count++;
-						}
+	for(int i = 0; i<size; i++){
+		for(int j = 0; j<size; j++){
+			if(map[i][j] == 1){
+				for(int k = 0; k<2; k++){
+					float offset[] = {i, k, j};
+					model[count].init(offset);
+					model[count].bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
+					count++;
+				}
+			}
+		}
+	}
+
+	float offset[] = {10, 5, 10};
+	model[numBlocks].init(offset);
 }
 
 void renderScene(void)
@@ -151,7 +159,7 @@ void renderScene(void)
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
-			
+
 			}
 		}
 		if(keys['s'] || keys['S']){
@@ -179,7 +187,7 @@ void renderScene(void)
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
-				
+
 			}
 		}
 		if(keys['d'] || keys['D']){
@@ -191,7 +199,7 @@ void renderScene(void)
 				camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
-				
+
 			}
 		}
 		if(collide) break;
@@ -201,7 +209,7 @@ void renderScene(void)
 
 	floorModel->draw(transformPipeline);
 
-	for(int i = 0; i<numBlocks; i++)
+	for(int i = 0; i<numBlocks+1; i++)
 		model[i].draw(transformPipeline);
 
 	char topText[256];
