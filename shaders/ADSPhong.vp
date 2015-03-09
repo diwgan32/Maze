@@ -8,6 +8,8 @@
 in vec4 vVertex;
 in vec3 vNormal;
 in vec4 vTexture0;
+in vec4 vTangent;
+in vec4 vBitangent;
 
 uniform mat4   mvpMatrix;
 uniform mat4   mvMatrix;

@@ -19,7 +19,7 @@ smooth in vec2 vTexCoords;
 
 void main(void)
     {
-	const float maxVariance = 256.0; // Mess around with this value to increase/decrease normal perturbation
+	const float maxVariance = 32.0; // Mess around with this value to increase/decrease normal perturbation
 	const float minVariance = maxVariance / 2.0;
 	
 	// Create a normal which is our standard normal + the normal map perturbation (which is going to be either positive or negative)
