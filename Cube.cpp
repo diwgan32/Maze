@@ -5,10 +5,9 @@
 
 #define VERT_TOTAL 24
 
-#define V_SIZE 72
-#define N_SIZE (VERT_TOTAL * 4)
-#define T_SIZE (VERT_TOTAL * 2)
-#define TG_SIZE N_SIZE
+#define CUBE_V_SIZE (VERT_TOTAL * 3)
+#define CUBE_N_SIZE (VERT_TOTAL * 3)
+#define CUBE_T_SIZE (VERT_TOTAL * 2)
 
 #define V_COORD_SZ 3
 #define N_COORD_SZ 3
@@ -24,9 +23,13 @@ int Cube::locAmbient, Cube::locDiffuse, Cube::locSpecular, Cube::locEyeLight, Cu
 int Cube::locMVP, Cube::locMV, Cube::locNM;
 
 Cube::Cube(){
+	final_vert = new float[CUBE_V_SIZE];
+	norm_final = new float[CUBE_N_SIZE];
+	final_text = new float[CUBE_T_SIZE];
 }
 
 Cube::~Cube(){
+	delete final_vert, norm_final, final_text;
 }
 
 GLuint Cube::loadShaderPair(char * vertsrc, char * fragsrc){
@@ -236,36 +239,31 @@ void Cube::init(float offset[3]){
 		0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0,
 		0, -1, 0, 0, -1, 0, 0, -1, 0, 0, -1, 0};
 
-	final_vert = new float[72];
-
-	norm_final = new float[N_SIZE];
-	final_text = new float[T_SIZE];
-
-	for(int i = 0; i<V_SIZE; i++){
+	for(int i = 0; i<CUBE_V_SIZE; i++){
 		final_vert[i] = VERTS[i] + offset[i % 3];
 
 		norm_final[i] = NORM[i];
 	}
-	for(int i = 0; i<T_SIZE; i++)
+	for(int i = 0; i<CUBE_T_SIZE; i++)
 		final_text[i] = TEX[i];
 
 	float greatest = -99;
-	for(int i = 0; i<V_SIZE; i+=3){
+	for(int i = 0; i<CUBE_V_SIZE; i+=3){
 		if(final_vert[i] > greatest){
 			greatest = final_vert[i];
 		}
 	}
 	hitBox.greatestX = greatest;
 	greatest = -99;
-	for(int i = 2; i<V_SIZE; i+=3){
+	for(int i = 2; i<CUBE_V_SIZE; i+=3){
 		if(final_vert[i] > greatest){
 			greatest = final_vert[i];
 		}
 	}
 	hitBox.greatestY = greatest;
 	float least = 999;
-	for(int i = 0; i<V_SIZE; i+=3){
-		if(!(i >= V_SIZE)){
+	for(int i = 0; i<CUBE_V_SIZE; i+=3){
+		if(!(i >= CUBE_V_SIZE)){
 			if(final_vert[i] < least){
 				least= final_vert[i];
 
@@ -275,7 +273,7 @@ void Cube::init(float offset[3]){
 	cout << least << endl;
 	hitBox.leastX = least;
 	least = 99;
-	for(int i = 2; i<V_SIZE; i+=3){
+	for(int i = 2; i<CUBE_V_SIZE; i+=3){
 		if(final_vert[i] < least){
 			least= final_vert[i];
 		}
@@ -285,13 +283,13 @@ void Cube::init(float offset[3]){
 
 void Cube::bind(GLenum buff_type, GLenum draw_type){
 	glBindBuffer(buff_type, vertbuffID[0]);
-	glBufferData(buff_type, V_SIZE*FLOAT_SZ, final_vert, draw_type);
+	glBufferData(buff_type, CUBE_V_SIZE*FLOAT_SZ, final_vert, draw_type);
 
 	glBindBuffer(buff_type, normbuffID[0]);
-	glBufferData(buff_type, N_SIZE*FLOAT_SZ, norm_final, draw_type);
+	glBufferData(buff_type, CUBE_N_SIZE*FLOAT_SZ, norm_final, draw_type);
 
 	glBindBuffer(buff_type, texbuffID[0]);
-	glBufferData(buff_type, T_SIZE*FLOAT_SZ, final_text, draw_type);
+	glBufferData(buff_type, CUBE_T_SIZE*FLOAT_SZ, final_text, draw_type);
 
 	if(readShader == false){
 		shader = Cube::loadShaderPair("shaders/ADSPhong.vp", "shaders/ADSPhong.fp");
@@ -352,7 +350,7 @@ void Cube::draw(GLGeometryTransform transformPipeline){
 
 	glEnableVertexAttribArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, vertbuffID[0]);
-	glVertexAttribPointer(0, V_COORD_SZ, GL_FLOAT, GL_FALSE, 0,NULL);
+	glVertexAttribPointer(0, V_COORD_SZ, GL_FLOAT, GL_FALSE, 0, NULL);
 
 	glEnableVertexAttribArray(1);
 	glBindBuffer(GL_ARRAY_BUFFER, normbuffID[0]);

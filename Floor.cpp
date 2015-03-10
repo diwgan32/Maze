@@ -7,9 +7,9 @@
 
 #define VERT_TOTAL 4
 
-#define V_SIZE (VERT_TOTAL * 4)
-#define N_SIZE (VERT_TOTAL * 4)
-#define T_SIZE (VERT_TOTAL * 2)
+#define FLOOR_V_SIZE (VERT_TOTAL * 3)
+#define FLOOR_N_SIZE (VERT_TOTAL * 3)
+#define FLOOR_T_SIZE (VERT_TOTAL * 2)
 
 #define V_COORD_SZ 3
 #define N_COORD_SZ 3
@@ -25,9 +25,13 @@ int Floor::locAmbient, Floor::locDiffuse, Floor::locSpecular, Floor::locEyeLight
 int Floor::locMVP, Floor::locMV, Floor::locNM;
 
 Floor::Floor(){
+	final_vert = new float[FLOOR_V_SIZE];
+	norm_final = new float[FLOOR_N_SIZE];
+	final_text = new float[FLOOR_T_SIZE];
 }
 
 Floor::~Floor(){
+	delete final_vert, norm_final, final_text;
 }
 
 GLuint Floor::loadShaderPair(char * vertsrc, char * fragsrc){
@@ -224,27 +228,23 @@ void Floor::init(){
 
 	const float NORM[]= {0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0};
 
-	final_vert = new float[V_SIZE];
-	norm_final = new float[N_SIZE];
-	final_text = new float[T_SIZE];
-
-	for(int i = 0; i<V_SIZE; i++){
+	for(int i = 0; i<FLOOR_V_SIZE; i++){
 		final_vert[i] = VERTS[i];
 		norm_final[i] = NORM[i];
 	}
-	for(int i = 0; i<T_SIZE; i++)
+	for(int i = 0; i<FLOOR_T_SIZE; i++)
 		final_text[i] = TEX[i];
 }
 
 void Floor::bind(GLenum buff_type, GLenum draw_type){
 	glBindBuffer(buff_type, vertbuffID[0]);
-	glBufferData(buff_type, V_SIZE*FLOAT_SZ, final_vert, draw_type);
+	glBufferData(buff_type, FLOOR_V_SIZE*FLOAT_SZ, final_vert, draw_type);
 
 	glBindBuffer(buff_type, normbuffID[0]);
-	glBufferData(buff_type, N_SIZE*FLOAT_SZ, norm_final, draw_type);
+	glBufferData(buff_type, FLOOR_N_SIZE*FLOAT_SZ, norm_final, draw_type);
 
 	glBindBuffer(buff_type, texbuffID[0]);
-	glBufferData(buff_type, T_SIZE*FLOAT_SZ, final_text, draw_type);
+	glBufferData(buff_type, FLOOR_T_SIZE*FLOAT_SZ, final_text, draw_type);
 
 	if(readShader == false){
 		shader = Floor::loadShaderPair("shaders/ADSPhong.vp", "shaders/ADSPhong.fp");

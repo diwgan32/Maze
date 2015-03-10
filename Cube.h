@@ -30,10 +30,10 @@ public:
 private:
 	static GLuint loadShaderPair(char *, char *);
 
-	typedef float * Array;
-
 	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture, locNormal;
 	static int locMVP, locMV, locNM;
+
+	typedef float* Array;
 
 	int numFrame;
 

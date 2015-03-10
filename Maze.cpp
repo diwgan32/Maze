@@ -6,6 +6,7 @@
 #include "Maze.h"
 #include "Cube.h"
 #include "Floor.h"
+#include "SkyBox.h"
 
 #include "EasyBMP\EasyBMP.h"
 
@@ -31,6 +32,7 @@ using namespace std;
 
 Cube * model;
 Floor * floorModel;
+SkyBox * skyBox;
 
 GLFrustum           viewFrustum;
 GLMatrixStack       modelViewMatrix;
@@ -90,6 +92,10 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	floorModel->init();
 	floorModel->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
 
+	skyBox = new SkyBox();
+	skyBox->init();
+	skyBox->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
+
 	int size = 41;
 
 	for(int i = 0; i<size; i++){
@@ -113,7 +119,6 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	viewFrame.RotateLocalY(m3dDegToRad(180));
 
 	int count = 0;
-
 
 	for(int i = 0; i<size; i++){
 		for(int j = 0; j<size; j++){
@@ -240,6 +245,7 @@ void renderScene(void)
 	if(!collide)
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
+	skyBox->draw(transformPipeline);
 	floorModel->draw(transformPipeline);
 
 	for(int i = 0; i<numBlocks+1; i++)
