@@ -20,7 +20,9 @@
 #endif
 
 #include "stdafx.h"
+
 #include "SkyBox.h"
+#include "LoadShader.h"
 
 #define VERT_TOTAL 24
 
@@ -88,12 +90,15 @@ void SkyBox::init(void)
 
 	glGenBuffers(1, vertbuffID);
 
-	const float VERTS[] = {0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1
-		, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 
-		0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 
-		1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0};
+	// FLBRTB
 
-	copy_n(VERTS, sizeof(VERTS)/FLOAT_SZ, final_vert);
+	const float VERTS[] = {0, 0, 0, 0, 0.5f, 0, 0.5f, 0.5f, 0, 0.5f, 0, 0, 0, 0, 0.5f, 0, 0.5f
+		, 0.5f, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0.5f, 0, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0.5f, 0.5f, 
+		0, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0.5f, 0, 0, 0, 0.5f, 0, 0, 0.5f, 0.5f, 0.5f, 
+		0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0, 0, 0, 0, 0.5f, 0.5f, 0, 0.5f, 0.5f, 0, 0};
+
+	for(i = 0; i < sizeof(VERTS)/FLOAT_SZ; i++)
+		final_vert[i] = VERTS[i];
 }
 
 void SkyBox::bind(GLenum buff_type, GLenum draw_type)
@@ -101,11 +106,10 @@ void SkyBox::bind(GLenum buff_type, GLenum draw_type)
 	glBindBuffer(buff_type, vertbuffID[0]);
 	glBufferData(buff_type, SKYBOX_V_SIZE*FLOAT_SZ, final_vert, draw_type);
 
-	shader = gltLoadShaderPairWithAttributes("shaders/SkyBox.vp", "shaders/SkyBox.fp", 2, 
-		GLT_ATTRIBUTE_VERTEX, "vVertex",
-		GLT_ATTRIBUTE_NORMAL, "vNormal");
+	shader = loadShaderPair("shaders/SkyBox.vp", "shaders/SkyBox.fp");
 
 	locMVP = glGetUniformLocation(shader, "mvpMatrix");
+	locTexture = glGetUniformLocation(shader, "cubeMap");
 }
 
 // Called to draw scene

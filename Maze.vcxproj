@@ -74,6 +74,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\..\..\cygwin64\home\Jonathan\sp\extras\BSD_(revised)_license.txt" />
+    <None Include="neg_x.tga" />
+    <None Include="neg_y.tga" />
+    <None Include="neg_z.tga" />
+    <None Include="pos_x.tga" />
+    <None Include="pos_y.tga" />
+    <None Include="pos_z.tga" />
     <None Include="ReadMe.txt" />
     <None Include="shaders\SkyBox.fp" />
     <None Include="shaders\SkyBox.vp" />
@@ -82,6 +88,7 @@
     <ClInclude Include="Cube.h" />
     <ClInclude Include="EasyBMP\EasyBMP.h" />
     <ClInclude Include="Floor.h" />
+    <ClInclude Include="LoadShader.h" />
     <ClInclude Include="Maze.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="stdafx.h" />
@@ -91,6 +98,7 @@
     <ClCompile Include="Cube.cpp" />
     <ClCompile Include="EasyBMP.cpp" />
     <ClCompile Include="Floor.cpp" />
+    <ClCompile Include="LoadShader.cpp" />
     <ClCompile Include="Maze.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="stdafx.cpp">

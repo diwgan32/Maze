@@ -21,8 +21,6 @@ public:
 	void onAniso(GLfloat);
 	void offAniso();
 private:
-	static GLuint loadShaderPair(char *, char *);
-
 	static int locTexture;
 	static int locMVP;
 

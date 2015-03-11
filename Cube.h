@@ -28,8 +28,6 @@ public:
 	void offAniso();
 	box hitBox;
 private:
-	static GLuint loadShaderPair(char *, char *);
-
 	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture, locNormal;
 	static int locMVP, locMV, locNM;
 

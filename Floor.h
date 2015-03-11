@@ -22,8 +22,6 @@ public:
 	void offAniso();
 
 private:
-	static GLuint loadShaderPair(char *, char *);
-
 	typedef float * Array;
 
 	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture, locNormal;
