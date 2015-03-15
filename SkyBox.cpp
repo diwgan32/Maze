@@ -75,6 +75,7 @@ void SkyBox::init(void)
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);       
+
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
 	// Load Cube Map images
@@ -92,10 +93,11 @@ void SkyBox::init(void)
 
 	// FLBRTB
 
-	const float VERTS[] = {0, 0, 0, 0, 0.5f, 0, 0.5f, 0.5f, 0, 0.5f, 0, 0, 0, 0, 0.5f, 0, 0.5f
-		, 0.5f, 0, 0.5f, 0, 0, 0, 0, 0, 0, 0.5f, 0, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0.5f, 0.5f, 
-		0, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0, 0.5f, 0, 0, 0, 0.5f, 0, 0, 0.5f, 0.5f, 0.5f, 
-		0.5f, 0.5f, 0.5f, 0.5f, 0, 0, 0, 0, 0, 0, 0.5f, 0.5f, 0, 0.5f, 0.5f, 0, 0};
+	const int SIZE = 50;
+	const float VERTS[] = {-SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, SIZE
+		, SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, -SIZE, SIZE, SIZE, 
+		-SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, SIZE, SIZE, 
+		SIZE, SIZE, SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE};
 
 	for(i = 0; i < sizeof(VERTS)/FLOAT_SZ; i++)
 		final_vert[i] = VERTS[i];

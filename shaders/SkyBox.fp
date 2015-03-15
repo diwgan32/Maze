@@ -12,6 +12,6 @@ varying vec3 vVaryingTexCoord;
 
 void main(void)
 { 
-    gl_FragColor = texture1D(cubeMap, vVaryingTexCoord);
+    gl_FragColor = textureCube(cubeMap, vVaryingTexCoord);
 }
     

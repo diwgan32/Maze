@@ -248,7 +248,7 @@ void renderScene(void)
 	skyBox->draw(transformPipeline);
 	floorModel->draw(transformPipeline);
 
-	for(int i = 0; i<numBlocks+1; i++)
+	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
 	char topText[256];

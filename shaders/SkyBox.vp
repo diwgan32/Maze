@@ -13,7 +13,6 @@ uniform mat4  mvpMatrix;  // Transformation matrix
 // Texture Coordinate to fragment program
 varying vec3 vVaryingTexCoord;
 
-
 void main(void) 
 {
     // Pass on the texture coordinates 

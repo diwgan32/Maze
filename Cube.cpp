@@ -190,7 +190,7 @@ void Cube::init(float offset[3]){
 			}
 		}
 	}
-	cout << least << endl;
+
 	hitBox.leastX = least;
 	least = 99;
 	for(int i = 2; i<CUBE_V_SIZE; i+=3){
