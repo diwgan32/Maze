@@ -7,7 +7,7 @@
 #include "Cube.h"
 #include "Floor.h"
 #include "SkyBox.h"
-
+#include "Minimap.h"
 #include "EasyBMP\EasyBMP.h"
 
 #include <GLTools.h>            // OpenGL toolkit
@@ -33,6 +33,9 @@ using namespace std;
 Cube * model;
 Floor * floorModel;
 SkyBox * skyBox;
+Minimap * mmap;
+
+
 
 GLFrustum           viewFrustum;
 GLMatrixStack       modelViewMatrix;
@@ -110,7 +113,10 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	}
 	numBlocks *= 2;
 
-	model = new Cube[numBlocks+1];
+
+
+
+	model = new Cube[numBlocks];
 
 	viewFrame.MoveForward(3.0f);
 	viewFrame.MoveRight(.0f);
@@ -133,8 +139,10 @@ void setupRC(void/*HINSTANCE hInstance*/)
 		}
 	}
 
-	float offset[] = {10, 5, 10};
-	model[numBlocks].init(offset);
+	float offset[] = {-3, 0, -3};
+	mmap = new Minimap();
+	mmap->init(offset);
+	mmap->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
 }
 
 void renderScene(void)
@@ -245,12 +253,14 @@ void renderScene(void)
 	if(!collide)
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
+
+
 	skyBox->draw(transformPipeline);
 	floorModel->draw(transformPipeline);
-	
-	for(int i = 0; i<numBlocks; i++)
+	mmap->draw(transformPipeline);
+	for(int i = 0; i<numBlocks; i++){
 		model[i].draw(transformPipeline);
-
+	}
 	char topText[256];
 	sprintf(topText, "FPS: %d", (int) fps);
 
