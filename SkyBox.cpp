@@ -24,7 +24,7 @@
 #include "SkyBox.h"
 #include "LoadShader.h"
 
-#define SIZE 50
+#define SIZE 100
 
 #define FLOAT_SZ sizeof(float)
 
@@ -34,7 +34,7 @@ int SkyBox::locTexture;
 GLuint SkyBox::shader, SkyBox::textureID;
 
 // Six sides of a cube map
-const char *szCubeFaces[6] = { "pos_x.tga", "neg_x.tga", "pos_y.tga", "neg_y.tga", "pos_z.tga", "neg_z.tga" };
+const char *szCubeFaces[6] = { "sky_texture/pos_x.tga", "sky_texture/neg_x.tga", "sky_texture/pos_y.tga", "sky_texture/neg_y.tga", "sky_texture/pos_z.tga", "sky_texture/neg_z.tga" };
 
 GLenum  cube[6] = {  GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
