@@ -247,7 +247,7 @@ void renderScene(void)
 
 	skyBox->draw(transformPipeline);
 	floorModel->draw(transformPipeline);
-
+	
 	for(int i = 0; i<numBlocks; i++)
 		model[i].draw(transformPipeline);
 
