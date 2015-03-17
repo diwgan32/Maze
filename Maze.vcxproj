@@ -81,6 +81,8 @@
     <None Include="pos_y.tga" />
     <None Include="pos_z.tga" />
     <None Include="ReadMe.txt" />
+    <None Include="shaders\ADSPhong.fp" />
+    <None Include="shaders\ADSPhong.vp" />
     <None Include="shaders\SkyBox.fp" />
     <None Include="shaders\SkyBox.vp" />
   </ItemGroup>

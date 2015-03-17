@@ -24,13 +24,9 @@ private:
 	static int locTexture;
 	static int locMVP;
 
-	typedef float* Array;
-
 	static GLuint shader, textureID;
 
-	Array final_vert, final_text;
-
-	GLuint vertbuffID[1], texbuffID[1];
+	GLBatch batch;
 };
 
 #endif

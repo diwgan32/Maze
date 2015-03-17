@@ -24,11 +24,7 @@
 #include "SkyBox.h"
 #include "LoadShader.h"
 
-#define VERT_TOTAL 24
-
-#define SKYBOX_V_SIZE (VERT_TOTAL * 3)
-
-#define V_COORD_SZ 3
+#define SIZE 50
 
 #define FLOAT_SZ sizeof(float)
 
@@ -48,11 +44,9 @@ GLenum  cube[6] = {  GL_TEXTURE_CUBE_MAP_POSITIVE_X,
 	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z };
 
 SkyBox::SkyBox(){
-	final_vert = new float[SKYBOX_V_SIZE];
 }
 
 SkyBox::~SkyBox(){
-	delete final_vert;
 }
 
 //////////////////////////////////////////////////////////////////
@@ -65,7 +59,8 @@ void SkyBox::init(void)
 	GLenum eFormat;
 	int i;
 
-	glActiveTexture(GL_TEXTURE2);
+	glEnable(GL_TEXTURE_CUBE_MAP);
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
@@ -80,8 +75,7 @@ void SkyBox::init(void)
 
 	// Load Cube Map images
 	for(i = 0; i < 6; i++)
-	{        
-		// Load this texture map
+	{
 		pBytes = gltReadTGABits(szCubeFaces[i], &iWidth, &iHeight, &iComponents, &eFormat);
 		glTexImage2D(cube[i], 0, iComponents, iWidth, iHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBytes);
 		free(pBytes);
@@ -89,26 +83,17 @@ void SkyBox::init(void)
 
 	glGenerateMipmap(GL_TEXTURE_CUBE_MAP); 
 
-	glGenBuffers(1, vertbuffID);
-
-	// FLBRTB
-
-	const int SIZE = 50;
-	const float VERTS[] = {-SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, SIZE
-		, SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, -SIZE, SIZE, SIZE, 
-		-SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, SIZE, -SIZE, SIZE, -SIZE, -SIZE, -SIZE, SIZE, -SIZE, -SIZE, SIZE, SIZE, SIZE, 
-		SIZE, SIZE, SIZE, SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, -SIZE, SIZE, SIZE, -SIZE, SIZE, SIZE, -SIZE, -SIZE};
-
-	for(i = 0; i < sizeof(VERTS)/FLOAT_SZ; i++)
-		final_vert[i] = VERTS[i];
+	gltMakeCube(batch, SIZE);
 }
 
 void SkyBox::bind(GLenum buff_type, GLenum draw_type)
 {
-	glBindBuffer(buff_type, vertbuffID[0]);
-	glBufferData(buff_type, SKYBOX_V_SIZE*FLOAT_SZ, final_vert, draw_type);
-
 	shader = loadShaderPair("shaders/SkyBox.vp", "shaders/SkyBox.fp");
+
+	glLinkProgram(shader);
+
+	glBindAttribLocation(shader, 0, "vVertex");
+	glBindAttribLocation(shader, 1, "vNormal");
 
 	locMVP = glGetUniformLocation(shader, "mvpMatrix");
 	locTexture = glGetUniformLocation(shader, "cubeMap");
@@ -117,24 +102,18 @@ void SkyBox::bind(GLenum buff_type, GLenum draw_type)
 // Called to draw scene
 void SkyBox::draw(GLGeometryTransform transformPipeline)
 {
-	glActiveTexture(GL_TEXTURE2);
-	glEnable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE0);
+	glEnable(GL_TEXTURE_CUBE_MAP);
 	glUniform1i(locTexture, 0);
-	glBindTexture(GL_TEXTURE_2D, textureID);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
 	glUseProgram(shader);
 
 	glUniformMatrix4fv(locMVP, 1, GL_FALSE, transformPipeline.GetModelViewProjectionMatrix());
 
-	glEnableVertexAttribArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, vertbuffID[0]);
-	glVertexAttribPointer(0, V_COORD_SZ, GL_FLOAT, GL_FALSE, 0, NULL);
+	batch.Draw();
 
-	glDrawArrays(GL_QUADS, 0, VERT_TOTAL);
-
-	glDisableVertexAttribArray(0);
-
-	glActiveTexture(GL_TEXTURE2);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glDisable(GL_TEXTURE_2D);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+	glDisable(GL_TEXTURE_CUBE_MAP);
 }
