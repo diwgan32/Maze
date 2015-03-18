@@ -10,7 +10,6 @@
 #define MINIMAP_V_SIZE (VERT_TOTAL * 3)
 #define MINIMAP_N_SIZE (VERT_TOTAL * 3)
 #define MINIMAP_T_SIZE (VERT_TOTAL * 2)
-
 #define V_COORD_SZ 3
 #define N_COORD_SZ 3
 #define T_COORD_SZ 2
@@ -93,14 +92,14 @@ void Minimap::init(float offset[3]){
 	static GLenum eFormat;
 
 	if(readTexture == false){
-		pBits = gltReadTGABits("CoolTexture.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		pBits = gltReadTGABits("dirt.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		//nBits = gltReadTGABits("brick_sml_grn1b_SSBump.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
-	//	glGenFramebuffers(1, frameBufferID);
-//	glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID[0]);
+		//glGenFramebuffers(1, frameBufferID);
+	//glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID[0]);
 	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,textureID,1);	 
-	//glReadPixels(0, 0, 400, 400, GL_RED, GL_BYTE, pBits);
+	//glReadPixels(0, 0, 128, 128, GL_RED, GL_BYTE, pBits);
 	//cout << (int)pBits[0]<< endl;
 	// Texture
 	glActiveTexture(GL_TEXTURE0);
