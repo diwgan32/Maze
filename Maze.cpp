@@ -22,7 +22,9 @@
 #include <GL/glut.h>            // Windows FreeGlut equivalent
 #endif
 
-#define MOVE_SPEED 0.03f
+#define SPEED_MULTIPLIER 1.01f
+#define START_SPEED 0.02f
+#define MAX_SPEED 0.05f
 #define ROTATE_SPEED 0.1f
 
 #define START_WIDTH 940
@@ -34,8 +36,6 @@ Cube * model;
 Floor * floorModel;
 SkyBox * skyBox;
 Minimap * mmap;
-
-
 
 GLFrustum           viewFrustum;
 GLMatrixStack       modelViewMatrix;
@@ -60,6 +60,8 @@ int width, height;
 int map[41][41];
 int frame=0,time,timebase=0;
 float fps;
+
+float speed = 0;
 
 void changeSize(int w, int h)
 {
@@ -163,28 +165,28 @@ void renderScene(void)
 	for(int i = 0; i<numBlocks; i++){
 		if(keys['W'] || keys['w']){
 			if(keys['d'] || keys['D']){
-				if(-(camera_position[0] -30*sin((3.1415/180)*rot[2])*MOVE_SPEED -30*cos((3.14/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED-30*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				if(-(camera_position[0] -30*sin((3.1415/180)*rot[2])*speed -30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed-30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed-30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
-					camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
-					camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
-					camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
-					camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
+					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
+					camera_position[2] += -cos((3.1415/180)*rot[2])*speed;
+					camera_position[0] += cos((3.14/180)*rot[2])*speed;
+					camera_position[2] += sin((3.14/180)*rot[2])*speed;
 					modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 					collide = true;
 
 				}
 			}else if(keys['A'] || keys['a']){	
-				if(-(camera_position[0] -30*sin((3.1415/180)*rot[2])*MOVE_SPEED +30*cos((3.14/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED+30*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED+30*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED+30*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				if(-(camera_position[0] -30*sin((3.1415/180)*rot[2])*speed +30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed+30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed+30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed+30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
-					camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
-					camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
-					camera_position[0] -= cos((3.14/180)*rot[2])*MOVE_SPEED;
-					camera_position[2] -= sin((3.14/180)*rot[2])*MOVE_SPEED;
+					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
+					camera_position[2] += -cos((3.1415/180)*rot[2])*speed;
+					camera_position[0] -= cos((3.14/180)*rot[2])*speed;
+					camera_position[2] -= sin((3.14/180)*rot[2])*speed;
 					modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 					collide = true;
@@ -192,12 +194,12 @@ void renderScene(void)
 				}
 			}else{
 
-				if(-(camera_position[0]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+				if(-(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
-					camera_position[0] += sin((3.1415/180)*rot[2])*MOVE_SPEED;
-					camera_position[2] += -cos((3.1415/180)*rot[2])*MOVE_SPEED;
+					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
+					camera_position[2] += -cos((3.1415/180)*rot[2])*speed;
 
 					modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
@@ -208,12 +210,12 @@ void renderScene(void)
 
 		}
 		if(keys['s'] || keys['S']){
-			if(-(camera_position[0]+30*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-				-(camera_position[2]-30*cos((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]-30*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+			if(-(camera_position[0]+30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+				-(camera_position[2]-30*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
-				camera_position[0] += -sin((3.1415/180)*rot[2])*MOVE_SPEED;
-				camera_position[2] += cos((3.1415/180)*rot[2])*MOVE_SPEED;
+				camera_position[0] += -sin((3.1415/180)*rot[2])*speed;
+				camera_position[2] += cos((3.1415/180)*rot[2])*speed;
 
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
@@ -222,12 +224,12 @@ void renderScene(void)
 			}
 		}
 		if(keys['A'] || keys['a']){
-			if(-(camera_position[0]+30*cos((3.14/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]+30*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-				-(camera_position[2]+30*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]+30*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+			if(-(camera_position[0]+30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]+30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+				-(camera_position[2]+30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
-				camera_position[0] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
-				camera_position[2] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
+				camera_position[0] += -cos((3.14/180)*rot[2])*speed;
+				camera_position[2] += -sin((3.14/180)*rot[2])*speed;
 
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
@@ -237,12 +239,12 @@ void renderScene(void)
 		}
 		if(keys['d'] || keys['D']){
 			//	cout << "D" << endl;
-			if(-(camera_position[0]-30*cos((3.14/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestX && -(camera_position[0]-30*cos((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastX &&
-				-(camera_position[2]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) < model[i].hitBox.greatestY && -(camera_position[2]-30*sin((3.1415/180)*rot[2])*MOVE_SPEED) > model[i].hitBox.leastY
+			if(-(camera_position[0]-30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+				-(camera_position[2]-30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
-				camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
-				camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
+				camera_position[0] += cos((3.14/180)*rot[2])*speed;
+				camera_position[2] += sin((3.14/180)*rot[2])*speed;
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
 
@@ -318,33 +320,45 @@ void renderText(char * p, int x, int y){
 }
 
 void processSceneInfo(void){
-	if(keys['w'] || keys['W']){
-		camera_position[0] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
-		camera_position[2] += cos((3.14/180)*rot[2])*MOVE_SPEED;
+	if(keyIn("wWsSaAdD"))
+		if(speed == 0)
+			speed = START_SPEED;
+		else{
+			speed *= SPEED_MULTIPLIER;
+			if(speed > MAX_SPEED)
+				speed = MAX_SPEED;
+		}
+	else
+		speed = 0;
+
+	if(keyIn("wW")){
+		camera_position[0] += -sin((3.14/180)*rot[2])*speed;
+		camera_position[2] += cos((3.14/180)*rot[2])*speed;
 	}
-	if(keys['s'] || keys['S']){
-		camera_position[0] += sin((3.14/180)*rot[2])*MOVE_SPEED;
-		camera_position[2] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
+	if(keyIn("sS")){
+		camera_position[0] += sin((3.14/180)*rot[2])*speed;
+		camera_position[2] += -cos((3.14/180)*rot[2])*speed;
 	}
-	if(keys['a'] || keys['A']){
-		camera_position[0] += cos((3.14/180)*rot[2])*MOVE_SPEED;
-		camera_position[2] += sin((3.14/180)*rot[2])*MOVE_SPEED;
+	if(keyIn("aA")){
+		camera_position[0] += cos((3.14/180)*rot[2])*speed;
+		camera_position[2] += sin((3.14/180)*rot[2])*speed;
+	}
+	if(keyIn("dD")){
+		camera_position[0] += -cos((3.14/180)*rot[2])*speed;
+		camera_position[2] += -sin((3.14/180)*rot[2])*speed;
 	}
 
-	if(keys['e'] || keys['E']){
-		camera_position[1] -= MOVE_SPEED;
+	if(keyIn("eE")){
+		camera_position[1] -= speed;
 	}
-	if(keys['c'] || keys['C']){
-		camera_position[1] += MOVE_SPEED;
+	if(keyIn("cC")){
+		camera_position[1] += speed;
 	}
-	if(keys['d'] || keys['D']){
-		camera_position[0] += -cos((3.14/180)*rot[2])*MOVE_SPEED;
-		camera_position[2] += -sin((3.14/180)*rot[2])*MOVE_SPEED;
-	}
+
 	if(!escDown)
 		glutWarpPointer(width / 2, height / 2);
 
-	if(keys['m'] || keys['M'])
+	if(keyIn("mM"))
 		if(isMipmap){
 			for(int i = 0; i < 20*20; i++)
 				model[i].onMipmap();
@@ -355,13 +369,12 @@ void processSceneInfo(void){
 			floorModel->offMipmap();
 		}
 
-		if(keys['n'] || keys['N'])
+		if(keyIn("nN"))
 			if(isAniso){
 				for(int i = 0; i < 20*20; i++)
 					model[i].onAniso(fLargest);
 				floorModel->onAniso(fLargest);
-			}
-			else{
+			}else{
 				for(int i = 0; i < 20*20; i++)
 					model[i].offAniso();
 				floorModel->offAniso();
@@ -385,7 +398,13 @@ void upKeys(unsigned char key, int x, int y){
 	keys[key] = false;
 }
 
-void mouseFuction(int x, int y){
+bool keyIn(const char * string){
+	for(int i = 0; i < sizeof(string); i++)
+		if(keys[string[i]]) return true;
+	return false;
+}
+
+void mouseFunction(int x, int y){
 	if(escDown){
 		renderText("PAUSED", width/2, height/2);
 		return;
@@ -433,7 +452,7 @@ int main(int argc, char * argv[])
 	glutDisplayFunc(renderScene);
 	glutKeyboardFunc(downKeys);
 	glutKeyboardUpFunc(upKeys);
-	glutPassiveMotionFunc(mouseFuction);
+	glutPassiveMotionFunc(mouseFunction);
 
 	glutSetCursor(GLUT_CURSOR_CROSSHAIR);
 

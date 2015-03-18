@@ -13,5 +13,8 @@ void renderText(char *, int, int);
 void processSceneInfo(void);
 void downKeys(unsigned char, int, int);
 void upKeys(unsigned char, int, int);
+void mouseFunction(int, int);
+
+bool keyIn(const char *);
 
 #endif
