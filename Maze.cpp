@@ -255,14 +255,14 @@ void renderScene(void)
 	if(!collide)
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
-
-
 	skyBox->draw(transformPipeline);
 	floorModel->draw(transformPipeline);
 	mmap->draw(transformPipeline);
+
 	for(int i = 0; i<numBlocks; i++){
 		model[i].draw(transformPipeline);
 	}
+
 	char topText[256];
 	sprintf(topText, "FPS: %d", (int) fps);
 
@@ -399,7 +399,7 @@ void upKeys(unsigned char key, int x, int y){
 }
 
 bool keyIn(const char * string){
-	for(int i = 0; i < sizeof(string); i++)
+	for(int i = 0; i < strlen(string); i++)
 		if(keys[string[i]]) return true;
 	return false;
 }
