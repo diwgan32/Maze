@@ -27,6 +27,7 @@
 #define MAX_SPEED 0.05f
 #define ROTATE_SPEED 0.1f
 
+#define PROPORTION 1000
 #define START_WIDTH 940
 #define START_HEIGHT 800
 
@@ -165,8 +166,8 @@ void renderScene(void)
 	for(int i = 0; i<numBlocks; i++){
 		if(keys['W'] || keys['w']){
 			if(keys['d'] || keys['D']){
-				if(-(camera_position[0] -30*sin((3.1415/180)*rot[2])*speed -30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed-30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
-					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed-30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
+				if(-(camera_position[0] -speed*PROPORTION*sin((3.1415/180)*rot[2])*speed -speed*PROPORTION*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed-speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+					-(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
 					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
@@ -179,8 +180,8 @@ void renderScene(void)
 
 				}
 			}else if(keys['A'] || keys['a']){	
-				if(-(camera_position[0] -30*sin((3.1415/180)*rot[2])*speed +30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed+30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
-					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed+30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed+30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
+				if(-(camera_position[0] -speed*PROPORTION*sin((3.1415/180)*rot[2])*speed +speed*PROPORTION*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+					-(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
 					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
@@ -194,8 +195,8 @@ void renderScene(void)
 				}
 			}else{
 
-				if(-(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
-					-(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
+				if(-(camera_position[0]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+					-(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
 					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
@@ -210,8 +211,8 @@ void renderScene(void)
 
 		}
 		if(keys['s'] || keys['S']){
-			if(-(camera_position[0]+30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
-				-(camera_position[2]-30*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
+			if(-(camera_position[0]+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+				-(camera_position[2]-speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
 				camera_position[0] += -sin((3.1415/180)*rot[2])*speed;
@@ -224,8 +225,8 @@ void renderScene(void)
 			}
 		}
 		if(keys['A'] || keys['a']){
-			if(-(camera_position[0]+30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]+30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
-				-(camera_position[2]+30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
+			if(-(camera_position[0]+speed*PROPORTION*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+				-(camera_position[2]+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
 				camera_position[0] += -cos((3.14/180)*rot[2])*speed;
@@ -239,8 +240,8 @@ void renderScene(void)
 		}
 		if(keys['d'] || keys['D']){
 			//	cout << "D" << endl;
-			if(-(camera_position[0]-30*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-30*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
-				-(camera_position[2]-30*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-30*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
+			if(-(camera_position[0]-speed*PROPORTION*cos((3.14/180)*rot[2])*speed) < model[i].hitBox.greatestX && -(camera_position[0]-speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastX &&
+				-(camera_position[2]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
 				camera_position[0] += cos((3.14/180)*rot[2])*speed;
