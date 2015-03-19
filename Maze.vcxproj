@@ -74,12 +74,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <None Include="..\..\..\..\cygwin64\home\Jonathan\sp\extras\BSD_(revised)_license.txt" />
-    <None Include="neg_x.tga" />
-    <None Include="neg_y.tga" />
-    <None Include="neg_z.tga" />
-    <None Include="pos_x.tga" />
-    <None Include="pos_y.tga" />
-    <None Include="pos_z.tga" />
     <None Include="ReadMe.txt" />
     <None Include="shaders\ADSPhong.fp" />
     <None Include="shaders\ADSPhong.vp" />
