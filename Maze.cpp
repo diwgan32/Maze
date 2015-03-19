@@ -27,7 +27,7 @@
 #define MAX_SPEED 0.05f
 #define ROTATE_SPEED 0.1f
 
-#define PROPORTION 1000
+#define PROPORTION 300
 #define START_WIDTH 940
 #define START_HEIGHT 800
 
@@ -256,14 +256,14 @@ void renderScene(void)
 	if(!collide)
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
+
+
 	skyBox->draw(transformPipeline);
 	floorModel->draw(transformPipeline);
 	mmap->draw(transformPipeline);
-
 	for(int i = 0; i<numBlocks; i++){
 		model[i].draw(transformPipeline);
 	}
-
 	char topText[256];
 	sprintf(topText, "FPS: %d", (int) fps);
 

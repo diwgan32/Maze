@@ -38,6 +38,7 @@ private:
 	GLuint vertbuffID[1], normbuffID[1], texbuffID[1];
 
 	int total, vsize, nsize, tsize; 
+	GLBatch batch;
 };
 
 #endif

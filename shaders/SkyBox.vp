@@ -6,7 +6,6 @@
 
 // Incoming per vertex... just the position
 attribute vec4 vVertex;
-attribute vec4 vNormal;
 
 uniform mat4 mvpMatrix;  // Transformation matrix
 
