@@ -321,7 +321,7 @@ void renderText(char * p, int x, int y){
 }
 
 void processSceneInfo(void){
-	if(keyIn("wWsSaAdD"))
+	if(keyIn("wWsSaAdD")){
 		if(speed == 0)
 			speed = START_SPEED;
 		else{
@@ -329,9 +329,10 @@ void processSceneInfo(void){
 			if(speed > MAX_SPEED)
 				speed = MAX_SPEED;
 		}
-	else
+		mmap->moveTexture(speed*100);
+	}else{
 		speed = 0;
-
+	}
 	if(keyIn("wW")){
 		camera_position[0] += -sin((3.14/180)*rot[2])*speed;
 		camera_position[2] += cos((3.14/180)*rot[2])*speed;

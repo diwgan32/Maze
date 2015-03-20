@@ -16,7 +16,7 @@ varying vec3 vVaryingTexCoord;
 void main(void) 
 {
     // Pass on the texture coordinates 
-    vVaryingTexCoord = normalize(vVertex.xyz);
+    vVaryingTexCoord = normalize(vVertex.xyz*2);
 	
     // Don't forget to transform the geometry!
     gl_Position = mvpMatrix * vVertex;

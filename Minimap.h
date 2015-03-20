@@ -20,17 +20,20 @@ public:
 
 	void onAniso(GLfloat);
 	void offAniso();
-	
+	void moveTexture(int);
+
 private:
 	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture, locNormal;
 	static int locMVP, locMV, locNM;
-
+	static GLbyte * pBits;
 	typedef float* Array;
 
 	int numFrame;
 
-	static GLuint shader, textureID, normalID;
-
+		static GLuint shader, textureID, normalID;
+	static int nWidth, nHeight, nComponents;
+	
+	static GLenum eFormat;
 	static bool readTexture, readShader;
 
 	Array final_vert, final_text, norm_final;

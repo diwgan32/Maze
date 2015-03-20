@@ -19,7 +19,9 @@
 GLuint Minimap::shader, Minimap::textureID, Minimap::normalID;
 GLuint frameBufferID[1];
 bool Minimap::readTexture, Minimap::readShader;
-
+GLenum Minimap::eFormat;
+int Minimap::nWidth, Minimap::nHeight, Minimap::nComponents;
+GLbyte *Minimap::pBits;
 int Minimap::locAmbient, Minimap::locDiffuse, Minimap::locSpecular, Minimap::locEyeLight, Minimap::locLight, Minimap::locTexture, Minimap::locNormal;
 int Minimap::locMVP, Minimap::locMV, Minimap::locNM;
 
@@ -73,6 +75,13 @@ void Minimap::onAniso(GLfloat f){
 	glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, f);
 }
 
+void Minimap::moveTexture(int speed){
+	//cout << speed << endl;
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, textureID);
+	glTexSubImage2D(GL_TEXTURE_2D, 0, speed, speed, nWidth, nHeight, eFormat, GL_UNSIGNED_BYTE, pBits);
+//	batch.Draw();
+}
 void Minimap::offAniso(){
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, textureID);
@@ -86,71 +95,51 @@ void Minimap::offAniso(){
 }
 
 void Minimap::init(float offset[3]){
-	static GLbyte * pBits;
+	
 
-	static int nWidth, nHeight, nComponents;
-	static GLenum eFormat;
+	
 
 	if(readTexture == false){
-		pBits = gltReadTGABits("dirt.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		pBits = gltReadTGABits("easybmp1.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		//nBits = gltReadTGABits("brick_sml_grn1b_SSBump.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
-		//glGenFramebuffers(1, frameBufferID);
-	//glBindFramebuffer(GL_FRAMEBUFFER, frameBufferID[0]);
-	//glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,textureID,1);	 
-	//glReadPixels(0, 0, 128, 128, GL_RED, GL_BYTE, pBits);
-	//cout << (int)pBits[0]<< endl;
-	// Texture
-	glActiveTexture(GL_TEXTURE0);
 	glEnable(GL_TEXTURE_2D);
-
+	glActiveTexture(GL_TEXTURE0);
 	glGenTextures(1, &textureID);
 	glBindTexture(GL_TEXTURE_2D, textureID);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+	
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, NULL);
+	
 	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, pBits);
-
-	glGenerateMipmap(GL_TEXTURE_2D);
-
-	// Normal
-	glActiveTexture(GL_TEXTURE1);
-	glEnable(GL_TEXTURE_2D);
-
-	glGenTextures(1, &normalID);
-	glBindTexture(GL_TEXTURE_2D, normalID);
-	glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
-
-	glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-	//glTexImage2D(GL_TEXTURE_2D, 0, nComponents, nWidth, nHeight, 0, eFormat, GL_UNSIGNED_BYTE, nBits);
-
 	glGenerateMipmap(GL_TEXTURE_2D);
 
 	offMipmap();
 
- 	gltMakeCube(batch, 2);
+ gltMakeCube(batch, 1);
 
 }
 
 void Minimap::bind(GLenum buff_type, GLenum draw_type){
+	
+
+	if(readShader == false){
 		shader = loadShaderPair("shaders/Identity.vp", "shaders/Identity.fp");
 
-	glLinkProgram(shader);
+		glLinkProgram(shader);
 
 	glBindAttribLocation(shader, 0, "vVertex");
 	glBindAttribLocation(shader, 1, "vNormal");
 
 	locMVP = glGetUniformLocation(shader, "mvpMatrix");
-	locTexture = glGetUniformLocation(shader, "cubeMap");
+	locTexture = glGetUniformLocation(shader, "colorMap");
+	}
 }
 
 void Minimap::draw(GLGeometryTransform transformPipeline){
@@ -168,6 +157,5 @@ glActiveTexture(GL_TEXTURE0);
 	glActiveTexture(GL_TEXTURE0);
 	glBindTexture(GL_TEXTURE_2D, 0);
 	glDisable(GL_TEXTURE_2D);
-
 
 }
