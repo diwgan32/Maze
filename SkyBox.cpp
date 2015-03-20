@@ -24,7 +24,7 @@
 #include "SkyBox.h"
 #include "LoadShader.h"
 
-#define SIZE 100
+#define SIZE 500
 
 #define FLOAT_SZ sizeof(float)
 

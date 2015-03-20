@@ -116,9 +116,6 @@ void setupRC(void/*HINSTANCE hInstance*/)
 	}
 	numBlocks *= 2;
 
-
-
-
 	model = new Cube[numBlocks];
 
 	viewFrame.MoveForward(3.0f);
@@ -170,10 +167,10 @@ void renderScene(void)
 					-(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
-					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
-					camera_position[2] += -cos((3.1415/180)*rot[2])*speed;
-					camera_position[0] += cos((3.14/180)*rot[2])*speed;
-					camera_position[2] += sin((3.14/180)*rot[2])*speed;
+					camera_position[0] += (float) (sin((3.1415/180)*rot[2])*speed);
+					camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*speed);
+					camera_position[0] += (float) (cos((3.14/180)*rot[2])*speed);
+					camera_position[2] += (float) (sin((3.14/180)*rot[2])*speed);
 					modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 					collide = true;
@@ -184,10 +181,10 @@ void renderScene(void)
 					-(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
-					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
-					camera_position[2] += -cos((3.1415/180)*rot[2])*speed;
-					camera_position[0] -= cos((3.14/180)*rot[2])*speed;
-					camera_position[2] -= sin((3.14/180)*rot[2])*speed;
+					camera_position[0] += (float) (sin((3.1415/180)*rot[2])*speed);
+					camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*speed);
+					camera_position[0] -= (float) (cos((3.14/180)*rot[2])*speed);
+					camera_position[2] -= (float) (sin((3.14/180)*rot[2])*speed);
 					modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 					collide = true;
@@ -199,8 +196,8 @@ void renderScene(void)
 					-(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 					)
 				{
-					camera_position[0] += sin((3.1415/180)*rot[2])*speed;
-					camera_position[2] += -cos((3.1415/180)*rot[2])*speed;
+					camera_position[0] += (float) (sin((3.1415/180)*rot[2])*speed);
+					camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*speed);
 
 					modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
@@ -215,9 +212,8 @@ void renderScene(void)
 				-(camera_position[2]-speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-speed*PROPORTION*cos((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
-				camera_position[0] += -sin((3.1415/180)*rot[2])*speed;
-				camera_position[2] += cos((3.1415/180)*rot[2])*speed;
-
+				camera_position[0] += (float) (-sin((3.1415/180)*rot[2])*speed);
+				camera_position[2] += (float) (cos((3.1415/180)*rot[2])*speed);
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
@@ -229,9 +225,8 @@ void renderScene(void)
 				-(camera_position[2]+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]+speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
-				camera_position[0] += -cos((3.14/180)*rot[2])*speed;
-				camera_position[2] += -sin((3.14/180)*rot[2])*speed;
-
+				camera_position[0] += (float) (-cos((3.14/180)*rot[2])*speed);
+				camera_position[2] += (float) (-sin((3.14/180)*rot[2])*speed);
 
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
@@ -244,8 +239,8 @@ void renderScene(void)
 				-(camera_position[2]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) < model[i].hitBox.greatestY && -(camera_position[2]-speed*PROPORTION*sin((3.1415/180)*rot[2])*speed) > model[i].hitBox.leastY
 				)
 			{
-				camera_position[0] += cos((3.14/180)*rot[2])*speed;
-				camera_position[2] += sin((3.14/180)*rot[2])*speed;
+				camera_position[0] += (float) (cos((3.14/180)*rot[2])*speed);
+				camera_position[2] += (float) (sin((3.14/180)*rot[2])*speed);
 				modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 				collide = true;
 
@@ -321,7 +316,7 @@ void renderText(char * p, int x, int y){
 }
 
 void processSceneInfo(void){
-	if(keyIn("wWsSaAdD")){
+	if(keyIn("wWsSaAdDeEcC"))
 		if(speed == 0)
 			speed = START_SPEED;
 		else{
