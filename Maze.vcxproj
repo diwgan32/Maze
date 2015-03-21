@@ -39,7 +39,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\ComputerGraphics\GLTools\include;C:\ComputerGraphics\freeglut-2.6.0\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files (x86)\boost_1_57_0;C:\ComputerGraphics\GLTools\include;C:\ComputerGraphics\freeglut-2.6.0\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Program Files (x86)\boost_1_57_0\lib32-msvc-10.0;$(VCInstallDir)lib;$(VCInstallDir)atlmfc\lib;$(WindowsSdkDir)lib;$(FrameworkSDKDir)\lib</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
