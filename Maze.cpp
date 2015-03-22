@@ -333,7 +333,8 @@ namespace Maze{
 		if(camera_position[1] + dy <= CAMERA_FLOOR)
 			camera_position[1] += dy;
 		else{
-			vy = 0;
+			if(!keys[' '])
+				vy = 0;
 			camera_position[1] = CAMERA_FLOOR;
 		}
 
