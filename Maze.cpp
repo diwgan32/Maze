@@ -29,6 +29,9 @@
 #define START_SPEED 1.5f
 #define MAX_SPEED 3.5f
 #define ROTATE_SPEED 0.1f
+#define START_JUMP_SPEED 5.0f
+#define GRAVITY -8.0f
+#define CAMERA_FLOOR -0.5f
 
 // in ms
 #define TICK 20
@@ -58,7 +61,7 @@ namespace Maze{
 
 	GLGeometryTransform transformPipeline, transformPipeline_minimap;
 
-	float camera_position[] = {-18, 0, 5};
+	float camera_position[] = {0, CAMERA_FLOOR, 0};
 	float rot[] = {-6.4, 0, 177};
 
 	GLFrame viewFrame, viewFrame_minimap;
@@ -76,7 +79,7 @@ namespace Maze{
 	int frame=0,time,timebase=0;
 	float fps;
 
-	float vxy = 0;
+	float vxz = 0, vy = 0;
 
 	boost::thread * psiThread;
 
@@ -280,80 +283,87 @@ namespace Maze{
 	}
 
 	void processSceneInfo(void){
-		float displace = 0;
+		float dxz = 0, dy = 0;
 
 		if(keyIn("wWsSaAdDeEcC")){
-			if(vxy == 0){
-				vxy = START_SPEED;
+			if(vxz == 0){
+				vxz = START_SPEED;
 			}else{
-				vxy *= SPEED_MULTIPLIER;
+				vxz *= SPEED_MULTIPLIER;
 
-				if(vxy > MAX_SPEED)
-					vxy = MAX_SPEED;
+				if(vxz > MAX_SPEED)
+					vxz = MAX_SPEED;
 			}
-			displace = (1.0f/TICK) * vxy;
+			dxz = (1.0f/TICK) * vxz;
 
-			//mmap->moveTexture(minimapOffset);
+			mmap->moveTexture(dxz*100);
 			//mmap->draw(transformPipeline);
 		}else{
-			vxy = 0;
+			vxz = 0;
 		}
+		
+		// For the very, very strange condition that up is -y
+		if(keys[' '] && vy == 0)
+				vy = -START_JUMP_SPEED;
+
+		vy += -((1.0f/TICK) * GRAVITY);
+		dy = (1.0f/TICK) * vy;
 
 		if(keyIn("wW")){
-			camera_position[0] += -sin((3.14/180)*rot[2])*displace;
-			camera_position[2] += cos((3.14/180)*rot[2])*displace;
+			camera_position[0] += -sin((3.14/180)*rot[2])*dxz;
+			camera_position[2] += cos((3.14/180)*rot[2])*dxz;
 			minimapOffsetY += .002;
 		}
 		if(keyIn("sS")){
-			camera_position[0] += sin((3.14/180)*rot[2])*displace;
-			camera_position[2] += -cos((3.14/180)*rot[2])*displace;
+			camera_position[0] += sin((3.14/180)*rot[2])*dxz;
+			camera_position[2] += -cos((3.14/180)*rot[2])*dxz;
 			minimapOffsetY -= .002;
 		}
 		if(keyIn("aA")){
-			camera_position[0] += cos((3.14/180)*rot[2])*displace;
-			camera_position[2] += sin((3.14/180)*rot[2])*displace;
+			camera_position[0] += cos((3.14/180)*rot[2])*dxz;
+			camera_position[2] += sin((3.14/180)*rot[2])*dxz;
 			minimapOffsetX += .002;
 		}
 		if(keyIn("dD")){
-			camera_position[0] += -cos((3.14/180)*rot[2])*displace;
-			camera_position[2] += -sin((3.14/180)*rot[2])*displace;
+			camera_position[0] += -cos((3.14/180)*rot[2])*dxz;
+			camera_position[2] += -sin((3.14/180)*rot[2])*dxz;
 			minimapOffsetX -= .002;
 		}
 
-		if(keyIn("eE")){
-			camera_position[1] -= displace;
-		}
-		if(keyIn("cC")){
-			camera_position[1] += displace;
+		if(camera_position[1] + dy <= CAMERA_FLOOR)
+			camera_position[1] += dy;
+		else{
+			vy = 0;
+			camera_position[1] = CAMERA_FLOOR;
 		}
 
 		if(!escDown)
 			glutWarpPointer(width / 2, height / 2);
 
 		for(int i = 0; i<numBlocks; i++){
-			if(keys['W'] || keys['w']){
-				if(keys['d'] || keys['D']){
-					if(-(camera_position[0] -displace*PROPORTION*sin((3.1415/180)*rot[2])*displace -displace*PROPORTION*cos((3.14/180)*rot[2])*displace) < model[i].hitBox.greatestX && -(camera_position[0]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace-displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastX &&
-						-(camera_position[2]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestY && -(camera_position[2]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastY)
+			if(keyIn("wW")){
+				if(keyIn("dD")){
+					if(-(camera_position[0] -dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz -dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*displace);
-						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*displace);
-						camera_position[0] += (float) (cos((3.14/180)*rot[2])*displace);
-						camera_position[2] += (float) (sin((3.14/180)*rot[2])*displace);
+						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*dxz);
+						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*dxz);
+						camera_position[0] += (float) (cos((3.14/180)*rot[2])*dxz);
+						camera_position[2] += (float) (sin((3.14/180)*rot[2])*dxz);
 						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
 						break;
 
 					}
-				}else if(keys['A'] || keys['a']){	
-					if(-(camera_position[0] -displace*PROPORTION*sin((3.1415/180)*rot[2])*displace +displace*PROPORTION*cos((3.14/180)*rot[2])*displace) < model[i].hitBox.greatestX && -(camera_position[0]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastX &&
-						-(camera_position[2]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace+displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestY && -(camera_position[2]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace+displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastY)
+				}else if(keyIn("aA")){	
+					if(-(camera_position[0] -dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz +dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*displace);
-						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*displace);
-						camera_position[0] -= (float) (cos((3.14/180)*rot[2])*displace);
-						camera_position[2] -= (float) (sin((3.14/180)*rot[2])*displace);
+						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*dxz);
+						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*dxz);
+						camera_position[0] -= (float) (cos((3.14/180)*rot[2])*dxz);
+						camera_position[2] -= (float) (sin((3.14/180)*rot[2])*dxz);
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
@@ -361,11 +371,11 @@ namespace Maze{
 					}
 				}else{
 
-					if(-(camera_position[0]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestX && -(camera_position[0]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastX &&
-						-(camera_position[2]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestY && -(camera_position[2]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastY)
+					if(-(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*displace);
-						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*displace);
+						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*dxz);
+						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*dxz);
 
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
@@ -374,37 +384,37 @@ namespace Maze{
 					}
 				}
 			}
-			if(keys['s'] || keys['S']){
-				if(-(camera_position[0]+displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestX && -(camera_position[0]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastX &&
-					-(camera_position[2]-displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestY && -(camera_position[2]-displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastY)
+			if(keyIn("sS")){
+				if(-(camera_position[0]+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
+					-(camera_position[2]-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
-					camera_position[0] += (float) (-sin((3.1415/180)*rot[2])*displace);
-					camera_position[2] += (float) (cos((3.1415/180)*rot[2])*displace);
+					camera_position[0] += (float) (-sin((3.1415/180)*rot[2])*dxz);
+					camera_position[2] += (float) (cos((3.1415/180)*rot[2])*dxz);
 
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
 					break;
 				}
 			}
-			if(keys['A'] || keys['a']){
-				if(-(camera_position[0]+displace*PROPORTION*cos((3.14/180)*rot[2])*displace) < model[i].hitBox.greatestX && -(camera_position[0]+displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastX &&
-					-(camera_position[2]+displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestY && -(camera_position[2]+displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastY)
+			if(keyIn("aA")){
+				if(-(camera_position[0]+dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
+					-(camera_position[2]+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
-					camera_position[0] += (float) (-cos((3.14/180)*rot[2])*displace);
-					camera_position[2] += (float) (-sin((3.14/180)*rot[2])*displace);
+					camera_position[0] += (float) (-cos((3.14/180)*rot[2])*dxz);
+					camera_position[2] += (float) (-sin((3.14/180)*rot[2])*dxz);
 
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
 					break;
 				}
 			}
-			if(keys['d'] || keys['D']){
+			if(keyIn("dD")){
 				//	cout << "D" << endl;
-				if(-(camera_position[0]-displace*PROPORTION*cos((3.14/180)*rot[2])*displace) < model[i].hitBox.greatestX && -(camera_position[0]-displace*PROPORTION*cos((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastX &&
-					-(camera_position[2]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) < model[i].hitBox.greatestY && -(camera_position[2]-displace*PROPORTION*sin((3.1415/180)*rot[2])*displace) > model[i].hitBox.leastY)
+				if(-(camera_position[0]-dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
+					-(camera_position[2]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
-					camera_position[0] += (float) (cos((3.14/180)*rot[2])*displace);
-					camera_position[2] += (float) (sin((3.14/180)*rot[2])*displace);
+					camera_position[0] += (float) (cos((3.14/180)*rot[2])*dxz);
+					camera_position[2] += (float) (sin((3.14/180)*rot[2])*dxz);
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
 

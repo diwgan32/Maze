@@ -239,10 +239,10 @@ void Cube::bind(GLenum buff_type, GLenum draw_type){
 }
 
 void Cube::draw(GLGeometryTransform transformPipeline){
-	static GLfloat vLightPos[] = { final_vert[0] - 0.5f, final_vert[1], final_vert[2] - 0.5f };
+	static GLfloat vLightPos[] = { final_vert[0] - 0.5f, final_vert[1] - 0.5f, final_vert[2] - 0.5f };
 	const GLfloat vWhite[] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	GLfloat vEyeLight[] = {1.0f, -1.0f, 1.0f};
+	GLfloat vEyeLight[] = {1.0f, 1.0f, 1.0f};
 	GLfloat vAmbientColor[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat vSpecularColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
