@@ -61,7 +61,7 @@ namespace Maze{
 
 	GLGeometryTransform transformPipeline, transformPipeline_minimap;
 
-	float camera_position[] = {0, CAMERA_FLOOR, 0};
+	float camera_position[] = {-18, CAMERA_FLOOR, 6};
 	float rot[] = {-6.4, 0, 177};
 
 	GLFrame viewFrame, viewFrame_minimap;
