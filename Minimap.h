@@ -11,20 +11,15 @@ public:
 	Minimap(void);
 	~Minimap(void);
 
-	void init(float[]);
+	void init(float[], float);
 	void bind(GLenum, GLenum);
-	void draw(GLGeometryTransform);
+	void draw(GLGeometryTransform, float, float);
 
-	void onMipmap();
-	void offMipmap();
-
-	void onAniso(GLfloat);
-	void offAniso();
-	void moveTexture(int);
-
+	static float * offset;
+	void moveTexture(float);
 private:
-	static int locAmbient, locDiffuse, locSpecular, locEyeLight, locLight, locTexture, locNormal;
-	static int locMVP, locMV, locNM;
+	static int locTexture, locOffset;
+	static int locP, locMV, locNM;
 	static GLbyte * pBits;
 	typedef float* Array;
 
@@ -35,13 +30,14 @@ private:
 	
 	static GLenum eFormat;
 	static bool readTexture, readShader;
-
+	
 	Array final_vert, final_text, norm_final;
 
 	GLuint vertbuffID[1], normbuffID[1], texbuffID[1];
 
 	int total, vsize, nsize, tsize; 
 	GLBatch batch;
+
 };
 
 #endif

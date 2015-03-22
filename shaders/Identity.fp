@@ -8,10 +8,10 @@ out vec4 vFragColor;
 
 uniform sampler2D colorMap;
 
-varying vec3 vVaryingTexCoord;
+smooth in vec2 vVaryingTexCoord;
 
 void main(void)
 { 
-    gl_FragColor = texture2D(colorMap, vVaryingTexCoord.st);
+    gl_FragColor = texture2D(colorMap, vVaryingTexCoord);
 }
     

@@ -34,8 +34,8 @@
 #define TICK 20
 
 #define PROPORTION 30
-#define START_WIDTH 940
-#define START_HEIGHT 800
+#define START_WIDTH 1024
+#define START_HEIGHT 1024
 
 #define MAZE_SIZE 41
 
@@ -47,19 +47,21 @@ namespace Maze{
 	Floor * floorModel;
 	SkyBox * skyBox;
 	Minimap * mmap;
-
+	float minimapOffsetX = .4;
+	float minimapOffsetY = .6;
 	GLFrustum           viewFrustum;
 	GLMatrixStack       modelViewMatrix;
 	GLMatrixStack       projectionMatrix;
-
+	float matrix1[16];
+	GLMatrixStack       modelViewMatrix_minimap;
 	GLfloat fLargest;
 
-	GLGeometryTransform transformPipeline;
+	GLGeometryTransform transformPipeline, transformPipeline_minimap;
 
-	float camera_position[] = {0, 0, 0};
-	float rot[] = {0, 0, 0};
+	float camera_position[] = {-18, 0, 5};
+	float rot[] = {-6.4, 0, 177};
 
-	GLFrame viewFrame;
+	GLFrame viewFrame, viewFrame_minimap;
 
 	int numBlocks = 0;
 
@@ -92,6 +94,8 @@ namespace Maze{
 		projectionMatrix.LoadMatrix(viewFrustum.GetProjectionMatrix());
 		transformPipeline.SetMatrixStacks(modelViewMatrix, projectionMatrix);
 		modelViewMatrix.LoadIdentity();
+		transformPipeline_minimap.SetMatrixStacks(modelViewMatrix_minimap, projectionMatrix);
+		modelViewMatrix_minimap.LoadIdentity();
 	}
 
 	void setupRC(void/*HINSTANCE hInstance*/)
@@ -129,11 +133,9 @@ namespace Maze{
 
 		model = new Cube[numBlocks];
 
-		viewFrame.MoveForward(3.0f);
-		viewFrame.MoveRight(.0f);
-		viewFrame.MoveUp(0.0f);
+		viewFrame.TranslateLocal(18, 0, 1);
 
-		viewFrame.RotateLocalY(m3dDegToRad(180));
+		//viewFrame.RotateLocalY(m3dDegToRad(180));
 
 		int count = 0;
 
@@ -150,10 +152,11 @@ namespace Maze{
 			}
 		}
 
-		float offset[] = {-3, 0, -3};
+
 		mmap = new Minimap();
-		mmap->init(offset);
+		mmap->init(Minimap::offset, .5);
 		mmap->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
+		
 	}
 
 	void renderScene(void)
@@ -166,13 +169,12 @@ namespace Maze{
 		glEnable(GL_DEPTH_TEST);
 
 		modelViewMatrix.PushMatrix();
-
 		modelViewMatrix.Rotate(rot[0], 1.0, 0.0, 0.0);
 		modelViewMatrix.Rotate(rot[2], 0.0, 1.0, 0.0);	
 
 		float * camera_vector = new float[3];
 
-		//if(!collide)
+		//	cout << rot[0] << " " << rot[1] <<" " << rot[2]<< endl;
 		modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 		// Toggle mipmaps/anisotropic filtering if changed
@@ -201,9 +203,8 @@ namespace Maze{
 			chAniso = false;
 		}
 
-		skyBox->draw(transformPipeline);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		floorModel->draw(transformPipeline);
-		mmap->draw(transformPipeline);
 
 		for(int i = 0; i<numBlocks; i++){
 			model[i].draw(transformPipeline);
@@ -212,11 +213,15 @@ namespace Maze{
 		sprintf(topText, "FPS: %d", (int) fps);
 
 		renderText(topText, 10, height - 20);
-
+		
+		mmap->draw(transformPipeline, minimapOffsetX, minimapOffsetY);
 		modelViewMatrix.PopMatrix();
+		
+	
 
 		glutSwapBuffers();
 		glutPostRedisplay();
+
 	}
 
 	void renderText(char * p, int x, int y){
@@ -288,7 +293,8 @@ namespace Maze{
 			}
 			displace = (1.0f/TICK) * vxy;
 
-			mmap->moveTexture(displace*100);
+			//mmap->moveTexture(minimapOffset);
+			//mmap->draw(transformPipeline);
 		}else{
 			vxy = 0;
 		}
@@ -296,18 +302,22 @@ namespace Maze{
 		if(keyIn("wW")){
 			camera_position[0] += -sin((3.14/180)*rot[2])*displace;
 			camera_position[2] += cos((3.14/180)*rot[2])*displace;
+			minimapOffsetY += .002;
 		}
 		if(keyIn("sS")){
 			camera_position[0] += sin((3.14/180)*rot[2])*displace;
 			camera_position[2] += -cos((3.14/180)*rot[2])*displace;
+			minimapOffsetY -= .002;
 		}
 		if(keyIn("aA")){
 			camera_position[0] += cos((3.14/180)*rot[2])*displace;
 			camera_position[2] += sin((3.14/180)*rot[2])*displace;
+			minimapOffsetX += .002;
 		}
 		if(keyIn("dD")){
 			camera_position[0] += -cos((3.14/180)*rot[2])*displace;
 			camera_position[2] += -sin((3.14/180)*rot[2])*displace;
+			minimapOffsetX -= .002;
 		}
 
 		if(keyIn("eE")){
@@ -333,6 +343,7 @@ namespace Maze{
 						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
+						break;
 
 					}
 				}else if(keys['A'] || keys['a']){	
@@ -346,7 +357,7 @@ namespace Maze{
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
-
+						break;
 					}
 				}else{
 
@@ -359,7 +370,7 @@ namespace Maze{
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
-
+						break;
 					}
 				}
 			}
@@ -384,7 +395,7 @@ namespace Maze{
 
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
-
+					break;
 				}
 			}
 			if(keys['d'] || keys['D']){

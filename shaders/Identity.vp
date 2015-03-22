@@ -5,19 +5,34 @@
 #version 130
 
 // Incoming per vertex... just the position
-attribute vec4 vVertex;
-attribute vec4 vNormal;
+in vec4 vVertex;
+in vec2 vTexture0;
 
-uniform mat4 mvpMatrix;  // Transformation matrix
-
+uniform mat4 pMatrix;  // Transformation matrix
+uniform mat4 mvMatrix;
+uniform vec2 textureOffset;
 // Texture Coordinate to fragment program
-varying vec3 vVaryingTexCoord;
+smooth out vec2 vVaryingTexCoord;
 
 void main(void) 
 {
     // Pass on the texture coordinates 
-    vVaryingTexCoord = normalize(vVertex.xyz*2);
-	
+    vVaryingTexCoord = vTexture0+textureOffset;
+	mat4 ModelView = mvMatrix;
+	ModelView[0][0] = -1;
+ModelView[0][1] = 0;
+ModelView[0][2] = 0;
+
+// Column 1:
+ModelView[1][0] = 0;
+ModelView[1][1] = -1;
+ModelView[1][2] = 0;
+
+// Column 2:
+ModelView[2][0] = 0;
+ModelView[2][1] = 0;
+ModelView[2][2] = 1;
     // Don't forget to transform the geometry!
-    gl_Position = mvpMatrix * vVertex;
+	vec4 P = ModelView * vVertex;
+    gl_Position = pMatrix * P;
 }
