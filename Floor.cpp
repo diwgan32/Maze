@@ -194,10 +194,10 @@ void Floor::bind(GLenum buff_type, GLenum draw_type){
 }
 
 void Floor::draw(GLGeometryTransform transformPipeline){
-	static GLfloat vLightPos[] = { 0.0f, 10.0f, 0.0f };
+	static GLfloat vLightPos[] = { 0.0f, -10.0f, 0.0f };
 	const GLfloat vWhite[] = { 0.0f, 0.0f, 1.0f, 0.0f };
 
-	GLfloat vEyeLight[] = {-1.0f, -1.0f, -1.0f};
+	GLfloat vEyeLight[] = {-1.0f, 1.0f, -1.0f};
 	GLfloat vAmbientColor[] = { 0.9f, 0.9f, 0.9f, 1.0f };
 	GLfloat vDiffuseColor[] = { 1.0f, 1.0f, 1.0f, 1.0f};
 	GLfloat vSpecularColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
