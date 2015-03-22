@@ -39,7 +39,7 @@
 #define PROPORTION 30
 #define START_WIDTH 1024
 #define START_HEIGHT 1024
-
+#define DEG_TO_RAD (3.1415/180)
 #define MAZE_SIZE 41
 
 using namespace Maze;
@@ -159,7 +159,7 @@ namespace Maze{
 		mmap = new Minimap();
 		mmap->init(Minimap::offset, .5);
 		mmap->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
-		
+
 	}
 
 	void renderScene(void)
@@ -216,11 +216,11 @@ namespace Maze{
 		sprintf(topText, "FPS: %d", (int) fps);
 
 		renderText(topText, 10, height - 20);
-		
+
 		mmap->draw(transformPipeline, minimapOffsetX, minimapOffsetY);
 		modelViewMatrix.PopMatrix();
-		
-	
+
+
 
 		glutSwapBuffers();
 		glutPostRedisplay();
@@ -301,32 +301,32 @@ namespace Maze{
 		}else{
 			vxz = 0;
 		}
-		
+
 		// For the very, very strange condition that up is -y
 		if(keys[' '] && vy == 0)
-				vy = -START_JUMP_SPEED;
+			vy = -START_JUMP_SPEED;
 
 		vy += -((1.0f/TICK) * GRAVITY);
 		dy = (1.0f/TICK) * vy;
 
 		if(keyIn("wW")){
-			camera_position[0] += -sin((3.14/180)*rot[2])*dxz;
-			camera_position[2] += cos((3.14/180)*rot[2])*dxz;
+			camera_position[0] += -sin(DEG_TO_RAD*rot[2])*dxz;
+			camera_position[2] += cos(DEG_TO_RAD*rot[2])*dxz;
 			minimapOffsetY += .002;
 		}
 		if(keyIn("sS")){
-			camera_position[0] += sin((3.14/180)*rot[2])*dxz;
-			camera_position[2] += -cos((3.14/180)*rot[2])*dxz;
+			camera_position[0] += sin(DEG_TO_RAD*rot[2])*dxz;
+			camera_position[2] += -cos(DEG_TO_RAD*rot[2])*dxz;
 			minimapOffsetY -= .002;
 		}
 		if(keyIn("aA")){
-			camera_position[0] += cos((3.14/180)*rot[2])*dxz;
-			camera_position[2] += sin((3.14/180)*rot[2])*dxz;
+			camera_position[0] += cos(DEG_TO_RAD*rot[2])*dxz;
+			camera_position[2] += sin(DEG_TO_RAD*rot[2])*dxz;
 			minimapOffsetX += .002;
 		}
 		if(keyIn("dD")){
-			camera_position[0] += -cos((3.14/180)*rot[2])*dxz;
-			camera_position[2] += -sin((3.14/180)*rot[2])*dxz;
+			camera_position[0] += -cos(DEG_TO_RAD*rot[2])*dxz;
+			camera_position[2] += -sin(DEG_TO_RAD*rot[2])*dxz;
 			minimapOffsetX -= .002;
 		}
 
@@ -344,13 +344,13 @@ namespace Maze{
 		for(int i = 0; i<numBlocks; i++){
 			if(keyIn("wW")){
 				if(keyIn("dD")){
-					if(-(camera_position[0] -dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz -dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
-						-(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
+					if(-(camera_position[0] -dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz -dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*dxz);
-						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*dxz);
-						camera_position[0] += (float) (cos((3.14/180)*rot[2])*dxz);
-						camera_position[2] += (float) (sin((3.14/180)*rot[2])*dxz);
+						camera_position[0] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
@@ -358,13 +358,13 @@ namespace Maze{
 
 					}
 				}else if(keyIn("aA")){	
-					if(-(camera_position[0] -dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz +dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
-						-(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
+					if(-(camera_position[0] -dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz +dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*dxz);
-						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*dxz);
-						camera_position[0] -= (float) (cos((3.14/180)*rot[2])*dxz);
-						camera_position[2] -= (float) (sin((3.14/180)*rot[2])*dxz);
+						camera_position[0] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[0] -= (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
@@ -372,11 +372,11 @@ namespace Maze{
 					}
 				}else{
 
-					if(-(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
-						-(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
+					if(-(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] += (float) (sin((3.1415/180)*rot[2])*dxz);
-						camera_position[2] += (float) (-cos((3.1415/180)*rot[2])*dxz);
+						camera_position[0] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
 
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
@@ -386,23 +386,54 @@ namespace Maze{
 				}
 			}
 			if(keyIn("sS")){
-				if(-(camera_position[0]+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
-					-(camera_position[2]-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
-				{
-					camera_position[0] += (float) (-sin((3.1415/180)*rot[2])*dxz);
-					camera_position[2] += (float) (cos((3.1415/180)*rot[2])*dxz);
+				if(keyIn("dD")){
+					if(-(camera_position[0] +dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz -dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
+					{
+						camera_position[0] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] -= (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
-					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-					collide = true;
-					break;
+						collide = true;
+						break;
+
+					}
+				}else if(keyIn("aA")){	
+					if(-(camera_position[0] +dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz +dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
+					{
+						camera_position[0] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] -= (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[0] -= (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+
+						collide = true;
+						break;
+					}
+				}else{
+
+					if(-(camera_position[0]+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+						-(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
+					{
+						camera_position[0] += (float) (-sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+
+						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+						collide = true;
+						break;
+					}
 				}
+
 			}
 			if(keyIn("aA")){
-				if(-(camera_position[0]+dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]+dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
-					-(camera_position[2]+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
+				if(-(camera_position[0]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+					-(camera_position[2]+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
-					camera_position[0] += (float) (-cos((3.14/180)*rot[2])*dxz);
-					camera_position[2] += (float) (-sin((3.14/180)*rot[2])*dxz);
+					camera_position[0] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
+					camera_position[2] += (float) (-sin(DEG_TO_RAD*rot[2])*dxz);
 
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
@@ -411,11 +442,11 @@ namespace Maze{
 			}
 			if(keyIn("dD")){
 				//	cout << "D" << endl;
-				if(-(camera_position[0]-dxz*PROPORTION*cos((3.14/180)*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*cos((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastX &&
-					-(camera_position[2]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*sin((3.1415/180)*rot[2])*dxz) > model[i].hitBox.leastY)
+				if(-(camera_position[0]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
+					-(camera_position[2]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
-					camera_position[0] += (float) (cos((3.14/180)*rot[2])*dxz);
-					camera_position[2] += (float) (sin((3.14/180)*rot[2])*dxz);
+					camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+					camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
 

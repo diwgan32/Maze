@@ -70,7 +70,7 @@ void Minimap::init(float offset1[3], float speed){
 	static GLenum eFormat;
 
 	if(readTexture == false){
-		pBits = gltReadTGABits("easybmp1.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		pBits = gltReadTGABits("easybmp2.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		//nBits = gltReadTGABits("brick_sml_grn1b_SSBump.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
