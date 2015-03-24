@@ -492,7 +492,7 @@ namespace Maze{
 					camera_position[0] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
 					camera_position[2] += (float) (-sin(DEG_TO_RAD*rot[2])*dxz);
 					minimapOffsetX -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
-					minimapOffsetY -= (float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
+					minimapOffsetY -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
 					viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
 						
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
@@ -510,7 +510,7 @@ namespace Maze{
 					camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
 					camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 					minimapOffsetX -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
-					minimapOffsetY -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
+					minimapOffsetY -= (float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
 						
