@@ -20,18 +20,18 @@ void main(void)
     vVaryingTexCoord = vTexture0+textureOffset;
 	mat4 ModelView = mvMatrix;
 	ModelView[0][0] = -1;
-ModelView[0][1] = 0;
-ModelView[0][2] = 0;
+	ModelView[0][1] = 0;
+	ModelView[0][2] = 0;
 
-// Column 1:
-ModelView[1][0] = 0;
-ModelView[1][1] = -1;
-ModelView[1][2] = 0;
+	// Column 1:
+	ModelView[1][0] = 0;
+	ModelView[1][1] = -1;
+	ModelView[1][2] = 0;
 
-// Column 2:
-ModelView[2][0] = 0;
-ModelView[2][1] = 0;
-ModelView[2][2] = 1;
+	// Column 2:
+	ModelView[2][0] = 0;
+	ModelView[2][1] = 0;
+	ModelView[2][2] = 1;
     // Don't forget to transform the geometry!
 	vec4 P = ModelView * vVertex;
     gl_Position = pMatrix * P;

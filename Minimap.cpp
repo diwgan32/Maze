@@ -32,9 +32,9 @@ Minimap::Minimap(){
 	//norm_final = new float[MINIMAP_N_SIZE];
 	final_text = new float[MINIMAP_T_SIZE]; 
 		offset = new float[3];
-	offset[0] = 18;
+	offset[0] = -2;
 	offset[1] = -2;
-	offset[2] = 1;
+	offset[2] = 0;
 }
 Minimap::~Minimap(){
 	delete final_vert, norm_final, final_text;
@@ -48,12 +48,12 @@ void Minimap::moveTexture(float speed){
 	//init(offset1, offset);
 	//	bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
 	//	batch.Draw();
-	float TEX[]= {0, 0, 0, speed, speed, speed, speed, 0,
-		0, 0, 0, speed, speed, speed, speed, 0,
-		0, 0, 0, speed, speed, speed, speed, 0,
-		0, 0, 0, speed, speed, speed, speed, 0,
-		0, 0, 0, speed, speed, speed, speed, 0,
-		0, 0, 0, speed, speed, speed, speed, 0};
+	float TEX[]= {0, 0, 0, 0, speed, 0, speed, 0,
+		0, 0, 0, 0, speed, 0, speed, 0,
+		0, 0, 0, 0, speed, 0, speed, 0,
+		0, 0, 0, 0, speed, 0, speed, 0,
+		0, 0, 0, 0, speed, 0, speed, 0,
+		0, 0, 0, 0, speed, 0, speed, 0};
 
 	for(int i = 0; i<MINIMAP_T_SIZE; i++)
 		final_text[i] = TEX[i];
@@ -70,7 +70,7 @@ void Minimap::init(float offset1[3], float speed){
 	static GLenum eFormat;
 
 	if(readTexture == false){
-		pBits = gltReadTGABits("easybmp2.tga", &nWidth, &nHeight, &nComponents, &eFormat);
+		pBits = gltReadTGABits("easybmp1.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		//nBits = gltReadTGABits("brick_sml_grn1b_SSBump.tga", &nWidth, &nHeight, &nComponents, &eFormat);
 		readTexture = true;
 	}
@@ -96,10 +96,10 @@ void Minimap::init(float offset1[3], float speed){
 	glGenBuffers(1, texbuffID);
 
 	glClearColor(0.3f, 0.3f, 0.3f, 1.0f);
-const float VERTS[] = {0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 1, 0, 1
-		, 1, 0, 1, 0, 0, 0, 0, 0, 0, 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 
-		0, 1, 1, 1, 1, 1, 1, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 1, 
-		1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0};
+const float VERTS[] = {0, 0, 0, 0, .03, 0, .03, .03, 0, .03, 0, 0, 0, 0, .03, 0, .03
+		, .03, 0, .03, 0, 0, 0, 0, 0, 0, .03, 0, .03, .03, .03, .03, .03, .03, 0, .03, .03, 
+		0, .03, .03, .03, .03, .03, .03, 0, .03, 0, 0, 0, .03, 0, 0, .03, .03, .03, 
+		.03, .03, .03, .03, 0, 0, 0, 0, 0, 0, .03, .03, 0, .03, .03, 0, 0};
 
 	float TEX[]= {0, 0, 0, speed, speed, speed, speed, 0,
 		0, 0, 0, speed, speed, speed, speed, 0,

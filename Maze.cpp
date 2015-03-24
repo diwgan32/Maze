@@ -51,7 +51,7 @@ namespace Maze{
 	SkyBox * skyBox;
 	Minimap * mmap;
 	float minimapOffsetX = .4;
-	float minimapOffsetY = .6;
+	float minimapOffsetY = .9;
 	GLFrustum           viewFrustum;
 	GLMatrixStack       modelViewMatrix;
 	GLMatrixStack       projectionMatrix;
@@ -136,7 +136,7 @@ namespace Maze{
 
 		model = new Cube[numBlocks];
 
-		viewFrame.TranslateLocal(18, 0, 1);
+		//viewFrame.TranslateLocal(18, 0, 1);
 
 		//viewFrame.RotateLocalY(m3dDegToRad(180));
 
@@ -155,9 +155,11 @@ namespace Maze{
 			}
 		}
 
-
+//			viewFrame.TranslateLocal(camera_position[0], camera_position[1], camera_position[2]-5);
+				viewFrame.TranslateLocal(19.935, -1.435, -4.75);
+			//cout << -camera_position[0] << endl;
 		mmap = new Minimap();
-		mmap->init(Minimap::offset, .5);
+		mmap->init(Minimap::offset, .3);
 		mmap->bind(GL_ARRAY_BUFFER, GL_DYNAMIC_DRAW);
 
 	}
@@ -217,10 +219,14 @@ namespace Maze{
 
 		renderText(topText, 10, height - 20);
 
-		mmap->draw(transformPipeline, minimapOffsetX, minimapOffsetY);
+
 		modelViewMatrix.PopMatrix();
-
-
+	
+		modelViewMatrix.PushMatrix(viewFrame);
+			
+			modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]-1);
+			mmap->draw(transformPipeline, minimapOffsetX, minimapOffsetY);
+			modelViewMatrix.PopMatrix();
 
 		glutSwapBuffers();
 		glutPostRedisplay();
@@ -296,7 +302,7 @@ namespace Maze{
 			}
 			dxz = (1.0f/TICK) * vxz;
 
-			mmap->moveTexture(dxz*100);
+		//	mmap->moveTexture(dxz*100);
 			//mmap->draw(transformPipeline);
 		}else{
 			vxz = 0;
@@ -312,22 +318,33 @@ namespace Maze{
 		if(keyIn("wW")){
 			camera_position[0] += -sin(DEG_TO_RAD*rot[2])*dxz;
 			camera_position[2] += cos(DEG_TO_RAD*rot[2])*dxz;
-			minimapOffsetY += .002;
+			minimapOffsetX += sin(DEG_TO_RAD*rot[2])*dxz*.02;
+			minimapOffsetY += cos(DEG_TO_RAD*rot[2])*dxz*.02;
+		
+			viewFrame.TranslateLocal(sin(DEG_TO_RAD*rot[2])*dxz, 0, -cos(DEG_TO_RAD*rot[2])*dxz);
 		}
 		if(keyIn("sS")){
 			camera_position[0] += sin(DEG_TO_RAD*rot[2])*dxz;
 			camera_position[2] += -cos(DEG_TO_RAD*rot[2])*dxz;
-			minimapOffsetY -= .002;
+			minimapOffsetX += -sin(DEG_TO_RAD*rot[2])*dxz*.02;
+			minimapOffsetY += -cos(DEG_TO_RAD*rot[2])*dxz*.02;
+			viewFrame.TranslateLocal(-sin(DEG_TO_RAD*rot[2])*dxz, 0, cos(DEG_TO_RAD*rot[2])*dxz);
 		}
 		if(keyIn("aA")){
 			camera_position[0] += cos(DEG_TO_RAD*rot[2])*dxz;
 			camera_position[2] += sin(DEG_TO_RAD*rot[2])*dxz;
-			minimapOffsetX += .002;
+			minimapOffsetX += -cos(DEG_TO_RAD*rot[2])*dxz*.02;
+			minimapOffsetY += sin(DEG_TO_RAD*rot[2])*dxz*.02;
+			
+			viewFrame.TranslateLocal(-cos(DEG_TO_RAD*rot[2])*dxz, 0, -sin(DEG_TO_RAD*rot[2])*dxz);
 		}
 		if(keyIn("dD")){
 			camera_position[0] += -cos(DEG_TO_RAD*rot[2])*dxz;
 			camera_position[2] += -sin(DEG_TO_RAD*rot[2])*dxz;
-			minimapOffsetX -= .002;
+			minimapOffsetX += cos(DEG_TO_RAD*rot[2])*dxz*.02;
+			minimapOffsetY += -sin(DEG_TO_RAD*rot[2])*dxz*.02;
+			
+			viewFrame.TranslateLocal(cos(DEG_TO_RAD*rot[2])*dxz, 0, sin(DEG_TO_RAD*rot[2])*dxz);
 		}
 
 		if(camera_position[1] + dy <= CAMERA_FLOOR)
@@ -347,10 +364,17 @@ namespace Maze{
 					if(-(camera_position[0] -dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz -dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 						-(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
+						float tempX = camera_position[0];
+						float tempY = camera_position[2];
 						camera_position[0] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						minimapOffsetX -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetX -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (-sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
 						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
@@ -361,12 +385,18 @@ namespace Maze{
 					if(-(camera_position[0] -dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz +dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 						-(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
+						float tempX = camera_position[0];
+						float tempY = camera_position[2];
 						camera_position[0] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
-						camera_position[0] -= (float) (cos(DEG_TO_RAD*rot[2])*dxz);
-						camera_position[2] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[0] += -(float) (cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += -(float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						minimapOffsetX -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetX -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-
+						viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
 						collide = true;
 						break;
 					}
@@ -375,9 +405,14 @@ namespace Maze{
 					if(-(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 						-(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
+						float tempX = camera_position[0];
+						float tempY = camera_position[2];
 						camera_position[0] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
-
+						minimapOffsetX -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
+						
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 
 						collide = true;
@@ -390,12 +425,19 @@ namespace Maze{
 					if(-(camera_position[0] +dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz -dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 						-(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
-						camera_position[2] -= (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
+						float tempX = camera_position[0];
+						float tempY = camera_position[2];
+						camera_position[0] += -(float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += -(float) (-cos(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						minimapOffsetX -= -(float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= -(float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetX -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (-sin(DEG_TO_RAD*rot[2])*dxz*.02);
 						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-
+						viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
+						
 						collide = true;
 						break;
 
@@ -404,12 +446,19 @@ namespace Maze{
 					if(-(camera_position[0] +dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz +dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 						-(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
-						camera_position[0] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
-						camera_position[2] -= (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
-						camera_position[0] -= (float) (cos(DEG_TO_RAD*rot[2])*dxz);
-						camera_position[2] -= (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+						float tempX = camera_position[0];
+						float tempY = camera_position[2];
+						camera_position[0] += (float) -(sin(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) -(-cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[0] += (float) -(cos(DEG_TO_RAD*rot[2])*dxz);
+						camera_position[2] += (float) -(sin(DEG_TO_RAD*rot[2])*dxz);
+						minimapOffsetX -= (float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetX -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
-
+						viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
+						
 						collide = true;
 						break;
 					}
@@ -418,9 +467,15 @@ namespace Maze{
 					if(-(camera_position[0]+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 						-(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 					{
+						float tempX = camera_position[0];
+						float tempY = camera_position[2];
 						camera_position[0] += (float) (-sin(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
+						minimapOffsetX -= (float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
 
+						viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
+						
 						//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 						collide = true;
 						break;
@@ -432,9 +487,14 @@ namespace Maze{
 				if(-(camera_position[0]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]+dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 					-(camera_position[2]+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]+dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
+					float tempX = camera_position[0];
+						float tempY = camera_position[2];
 					camera_position[0] += (float) (-cos(DEG_TO_RAD*rot[2])*dxz);
 					camera_position[2] += (float) (-sin(DEG_TO_RAD*rot[2])*dxz);
-
+					minimapOffsetX -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
+					minimapOffsetY -= (float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
+					viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
+						
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
 					collide = true;
 					break;
@@ -445,15 +505,22 @@ namespace Maze{
 				if(-(camera_position[0]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestX && -(camera_position[0]-dxz*PROPORTION*cos(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastX &&
 					-(camera_position[2]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) < model[i].hitBox.greatestY && -(camera_position[2]-dxz*PROPORTION*sin(DEG_TO_RAD*rot[2])*dxz) > model[i].hitBox.leastY)
 				{
+					float tempX = camera_position[0];
+						float tempY = camera_position[2];
 					camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
 					camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
+					minimapOffsetX -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
+					minimapOffsetY -= (float) (sin(DEG_TO_RAD*rot[2])*dxz*.02);
 					//modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
+					viewFrame.TranslateLocal(-(camera_position[0]-tempX), 0, -(camera_position[2]-tempY));
+						
 					collide = true;
 
 				}
 			}
 			if(collide) break;
 		}
+			//
 	}
 
 	void downKeys(unsigned char key, int x, int y){
