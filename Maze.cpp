@@ -253,7 +253,7 @@ namespace Maze{
 		glRasterPos2i(x, y);
 
 		string s = p;
-		cout << p << endl;
+		//cout << p << endl;
 		void * font = GLUT_BITMAP_9_BY_15;
 
 		glDisable(GL_LIGHTING);
@@ -435,8 +435,8 @@ namespace Maze{
 						camera_position[2] += -(float) (-cos(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[0] += (float) (cos(DEG_TO_RAD*rot[2])*dxz);
 						camera_position[2] += (float) (sin(DEG_TO_RAD*rot[2])*dxz);
-						minimapOffsetX -= -(float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
-						minimapOffsetY -= -(float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetX -= (float) -(sin(DEG_TO_RAD*rot[2])*dxz*.02);
+						minimapOffsetY -= (float) -(cos(DEG_TO_RAD*rot[2])*dxz*.02);
 						minimapOffsetX -= (float) (cos(DEG_TO_RAD*rot[2])*dxz*.02);
 						minimapOffsetY -= (float) (-sin(DEG_TO_RAD*rot[2])*dxz*.02);
 						//	modelViewMatrix.Translate(camera_position[0], camera_position[1], camera_position[2]);
