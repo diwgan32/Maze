@@ -253,6 +253,7 @@ namespace Maze{
 		glRasterPos2i(x, y);
 
 		string s = p;
+		cout << p << endl;
 		void * font = GLUT_BITMAP_9_BY_15;
 
 		glDisable(GL_LIGHTING);
@@ -347,12 +348,15 @@ namespace Maze{
 			viewFrame.TranslateLocal(cos(DEG_TO_RAD*rot[2])*dxz, 0, sin(DEG_TO_RAD*rot[2])*dxz);
 		}
 
-		if(camera_position[1] + dy <= CAMERA_FLOOR)
+		if(camera_position[1] + dy <= CAMERA_FLOOR){
 			camera_position[1] += dy;
-		else{
+			viewFrame.TranslateLocal(0, -dy, 0);
+		}	else{
 			if(!keys[' '])
 				vy = 0;
+			float temp = camera_position[1];
 			camera_position[1] = CAMERA_FLOOR;
+			viewFrame.TranslateLocal(0, -CAMERA_FLOOR+temp, 0);
 		}
 
 		if(!escDown)
